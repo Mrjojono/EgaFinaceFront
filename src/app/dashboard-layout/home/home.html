@@ -1,0 +1,119 @@
+<div class=" h-screen">
+  <div class="grid grid-cols-2 gap-8">
+    <section class="rounded-lg h-75 shadow-none" hlmCard>
+      <div hlmCardHeader>
+        <h1 class=" font-normal text-gray-800" hlmCardTitle>Solde Total disponible</h1>
+        <div class="flex items-baseline gap-2">
+          <span class="text-3xl font-bold tracking-tight text-gray-900">4.250.000</span>
+          <span class="text-lg font-semibold text-emerald-700 uppercase">FCFA</span>
+        </div>
+      </div>
+      <div hlmCardContent class="pt-1">
+
+        <div class=" flex flex-row items-center justify-between ">
+          <h1 class="text-lg font-medium">{{clickAccount().type}} </h1>
+          <div class="flex items-baseline gap-2">
+            <span class=" font-medium tracking-tight text-gray-900">{{clickAccount().solde}}</span>
+            <span class="text-lg font-semibold text-emerald-700 uppercase">FCFA</span>
+          </div>
+        </div>
+
+        <div class="mt-2 flex items-center gap-2">
+          <span
+            class="flex h-2 w-2 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.6)]"></span>
+          <span class="text-xs font-bold uppercase tracking-wider text-emerald-900 opacity-70">Compte Actif</span>
+        </div>
+
+      </div>
+
+
+      <div hlmCardFooter class="flex flex-row justify-between items-center border-t border-zinc-100 pt-4 mt-2">
+        <div class="flex flex-col">
+          <span class="text-[10px] uppercase tracking-wider text-zinc-500 font-bold">IBAN</span>
+          <span class="font-mono text-sm text-zinc-800 tracking-tighter">
+              FR76 3000 6000 0123 4567 8901 234
+          </span>
+        </div>
+
+
+        <button hlmBtn variant="ghost" size="sm" class="h-8 w-8 p-0 text-zinc-400 hover:text-emerald-600">
+          <lucide-icon name="copy" class="w-4 h-4"></lucide-icon>
+        </button>
+      </div>
+
+    </section>
+
+    <section class="rounded-lg h-75 shadow-none" hlmCard>
+      <div hlmCardHeader>
+        <h1 class="text-2xl font-medium" hlmCardTitle>Comptes</h1>
+        <div hlmCardAction class="bg-gray-100  hover:bg-gray-200 transition-colors cursor-pointer rounded p-3">
+          <lucide-icon name="plus" class="w-5 h-5"></lucide-icon>
+        </div>
+      </div>
+      <div class="flex overflow-y-auto space-y-1 custom-scrollbar  flex-col gap-2" hlmCardContent>
+
+        <div
+          class="group flex items-center justify-between p-1 px-2 rounded border border-transparent hover:border-emerald-200 hover:bg-emerald-50/40 transition-all cursor-pointer opacity-70">
+          <div class="flex items-center gap-4">
+            <div class="flex size-10 items-center justify-center rounded-full bg-zinc-100 text-zinc-500">
+              <lucide-icon name="wallet" class="size-5"></lucide-icon>
+            </div>
+            <div>
+              <p class="text-sm font-bold text-zinc-900 leading-none">Épargne Projet</p>
+              <p class="text-xs font-medium text-zinc-500 mt-1.5">Bloqué</p>
+            </div>
+          </div>
+          <div class="text-right">
+            <p class="text-lg font-black text-zinc-900 tracking-tight">
+              150.000 <span class="text-xs font-bold text-zinc-400 ml-0.5 uppercase">FCFA</span>
+            </p>
+          </div>
+        </div>
+        <div
+          class="group flex items-center justify-between p-1 px-2 rounded border border-transparent hover:border-emerald-200 hover:bg-emerald-50/40 transition-all cursor-pointer opacity-70">
+          <div class="flex items-center gap-4">
+            <div class="flex size-10 items-center justify-center rounded-full bg-zinc-100 text-zinc-500">
+              <lucide-icon name="wallet" class="size-5"></lucide-icon>
+            </div>
+            <div>
+              <p class="text-sm font-bold text-zinc-900 leading-none">Épargne Projet</p>
+              <p class="text-xs font-medium text-zinc-500 mt-1.5">Bloqué</p>
+            </div>
+          </div>
+          <div class="text-right">
+            <p class="text-lg font-black text-zinc-900 tracking-tight">
+              150.000 <span class="text-xs font-bold text-zinc-400 ml-0.5 uppercase">FCFA</span>
+            </p>
+          </div>
+        </div>
+
+      </div>
+      <div hlmCardFooter class="pt-4 pb-4 px-4 border-t border-zinc-100 mt-2">
+        <button hlmBtn variant="link"
+                class="w-full text-emerald-600 hover:text-emerald-700 p-0 h-auto font-bold text-sm flex items-center justify-center gap-2">
+          Voir tous vos comptes
+          <lucide-icon name="chevron-right" class="size-4"></lucide-icon>
+        </button>
+      </div>
+
+    </section>
+
+  </div>
+</div>
+
+
+<style>
+
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 4px;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background: #e4e4e7;
+    border-radius: 10px;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: #10b981;
+  }
+</style>

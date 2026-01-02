@@ -1,0 +1,139 @@
+<div class="grid grid-cols-1 lg:grid-cols-2 min-h-screen">
+
+  <!-- Section Gauche (Illustration) -->
+  <div class="hidden lg:flex bg-emerald-100/50 h-screen justify-between flex-col p-12 gap-10">
+    <h1 class="text-2xl font-bold text-emerald-900">Ega Finance</h1>
+    <figure class="mx-auto">
+      <img src="/profile.svg" alt="Illustration" class="w-96 h-96">
+    </figure>
+    <p class="text-emerald-900 font-medium text-lg italic">
+      "Secure, reliable, and tailored for your financial growth"
+    </p>
+  </div>
+
+
+  <div class="flex flex-col justify-center items-center p-8 lg:p-16 bg-white">
+    <div class="w-full max-w-md space-y-8">
+
+      <div class="text-start">
+        <h2 class="text-4xl font-bold text-gray-900 tracking-tight">S'enregistrer</h2>
+        <p class="text-gray-500 mt-3 text-lg">
+          Étape :
+          <span class="text-emerald-600 font-bold uppercase text-sm">
+            {{ steps() === 'email' ? '1/4' : steps() === 'username' ? '2/4' : steps() === "nationalite" ? '3/4' : '4/4' }}
+          </span>
+        </p>
+      </div>
+
+      <form class="space-y-6" [formGroup]="form" (ngSubmit)="onSubmit()">
+
+
+        @if (steps() === 'email') {
+          <div class="space-y-2 animate-in fade-in slide-in-from-right-4 duration-300">
+            <label hlmLabel for="email" class="text-sm font-semibold text-gray-700">Votre adresse Email</label>
+            <input hlmInput type="email" id="email" formControlName="email" placeholder="joan@gmail.com"
+                   class="w-full py-6 bg-gray-50/50">
+            <button
+              type="button"
+              (click)="goToStep(StepEnum.Username)"
+              hlmBtn
+              class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-6 mt-4">
+              Continuer
+            </button>
+          </div>
+        }
+
+        @if (steps() === 'username') {
+          <div class="space-y-4 animate-in fade-in slide-in-from-right-4 duration-300">
+            <div class="grid grid-cols-2 gap-4">
+              <div class="space-y-2">
+                <label hlmLabel for="nom">Nom</label>
+                <input formControlName="nom" hlmInput id="nom" placeholder="Doe" class="w-full py-6">
+              </div>
+              <div class="space-y-2">
+                <label hlmLabel for="prenom">Prénom</label>
+                <input formControlName="prenom" hlmInput id="prenom" placeholder="Joan" class="w-full py-6">
+              </div>
+            </div>
+
+            <div class="flex gap-3">
+              <button type="button" (click)="goToStep(StepEnum.Email)" hlmBtn variant="outline"
+                      class="flex-1 py-6 border-emerald-600 text-emerald-600">Retour
+              </button>
+              <button type="button" (click)="goToStep(StepEnum.Nationalite)" hlmBtn
+                      class="flex-2 bg-emerald-600 hover:bg-emerald-700 py-6">Suivant
+              </button>
+            </div>
+          </div>
+        }
+
+        @if (steps() === StepEnum.Nationalite) {
+          <div class="flex justify-center w-full">
+            <div class="w-full max-w-xl space-y-6 animate-in fade-in slide-in-from-right-4 duration-300">
+              <brn-select formControlName="nationalite" class="w-full" placeholder="Select an option">
+                <hlm-select-trigger class="w-full">
+                  <hlm-select-value/>
+                </hlm-select-trigger>
+
+                <hlm-select-content class="max-h-64 overflow-y-auto">
+                  @for (nat of nationalites(); track nat.name) {
+                    <hlm-option [value]="nat.name">
+                      <div class="flex items-center gap-3">
+                        <img
+                          [src]="nat.flag"
+                          alt=""
+                          class="w-5 h-4 rounded-sm object-cover"
+                        />
+                        <span>{{ nat.name }}</span>
+                      </div>
+                    </hlm-option>
+                  }
+                </hlm-select-content>
+
+
+              </brn-select>
+              <div class="flex py-4  gap-3">
+                <button type="button" (click)="goToStep(StepEnum.Username)" hlmBtn variant="outline"
+                        class="flex-1 py-6 border-emerald-600 text-emerald-600">
+                  Retour
+                </button>
+
+                <button type="button" (click)="goToStep(StepEnum.Password)" hlmBtn
+                        class="flex-[2] bg-emerald-600 hover:bg-emerald-700 py-6">
+                  Suivant
+                </button>
+              </div>
+            </div>
+          </div>
+        }
+
+
+        @if (steps() === 'password') {
+
+          <div class="space-y-4 animate-in fade-in slide-in-from-right-4 duration-300">
+            <div class="space-y-2">
+              <label hlmLabel for="pass">Mot de passe</label>
+              <input hlmInput formControlName="password" type="password" id="pass" placeholder="••••••••"
+                     class="w-full py-6">
+            </div>
+
+            <div class="flex gap-3">
+              <button type="button" (click)="goToStep(StepEnum.Nationalite)" hlmBtn variant="outline"
+                      class="flex-1 py-6 border-emerald-600 text-emerald-600">Retour
+              </button>
+              <button type="submit" hlmBtn
+                      class="flex-2 bg-emerald-600 hover:bg-emerald-700 py-6">Créer mon compte
+              </button>
+            </div>
+          </div>
+        }
+
+        <p class="text-center text-gray-600 font-medium pt-4">
+          Vous avez déjà un compte ?
+          <a routerLink="/login" class="text-emerald-600 hover:underline font-bold">Se connecter</a>
+        </p>
+
+      </form>
+    </div>
+  </div>
+</div>

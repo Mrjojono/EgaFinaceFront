@@ -1,0 +1,63 @@
+<div hlmSidebarWrapper class="flex h-screen w-full overflow-hidden bg-gray-50">
+
+  <hlm-sidebar collapsible="offcanvas" class="border-r bg-white group">
+    <hlm-sidebar-header class="p-6 flex flex-row items-center gap-3 border-b overflow-hidden">
+      <lucide-icon name="landmark" class="text-emerald-900 w-6 h-6 shrink-0"></lucide-icon>
+
+      <h1 class="text-lg font-bold text-emerald-900 truncate group-data-[state=collapsed]:hidden">
+        Ega Finance
+      </h1>
+    </hlm-sidebar-header>
+    <hlm-sidebar-content class="p-2">
+      <div class="space-y-1">
+        @for (navItem of NavItems; track navItem.title) {
+          <a [routerLink]="navItem.url"
+             #rla="routerLinkActive"
+             routerLinkActive="bg-emerald-100  text-emerald-900"
+             class="group relative flex items-center gap-3 p-3 rounded-md transition-all hover:bg-emerald-50 text-gray-600">
+
+            <lucide-icon
+              [name]="navItem.icon"
+              [class]="rla.isActive ? 'text-emerald-700 w-5 h-5' : 'text-gray-500 w-5 h-5'"
+              class="shrink-0">
+            </lucide-icon>
+
+            <span class="font-medium truncate group-data-[state=collapsed]:hidden"
+                  [class.font-bold]="rla.isActive">
+              {{ navItem.title }}
+            </span>
+          </a>
+        }
+      </div>
+    </hlm-sidebar-content>
+    <hlm-sidebar-footer class="p-2 border-t">
+      <button hlmBtn variant="ghost" class="w-full justify-start gap-3 px-3">
+        <lucide-icon name="log-out" class="w-5 h-5 shrink-0 text-gray-500"></lucide-icon>
+        <span class="group-data-[state=collapsed]:hidden font-medium">Déconnexion</span>
+      </button>
+    </hlm-sidebar-footer>
+  </hlm-sidebar>
+
+  <main class="flex-1 flex flex-col overflow-hidden">
+    <header class="h-16 flex items-center justify-between border-b bg-white px-4">
+      <button hlmSidebarTrigger class="p-2 hover:bg-emerald-50 text-emerald-900 rounded-md transition-colors">
+        <lucide-icon name="menu" class="w-5 h-5"></lucide-icon>
+      </button>
+      <div class="flex items-center gap-4">
+        <div class="relative w-64 lg:w-96">
+          <lucide-icon name="search"
+                       class="absolute left-1 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400"></lucide-icon>
+          <input hlmInput type="text" placeholder="Rechercher..."
+                 class="w-full pl-10 border-gray-200 focus:ring-emerald-500"/>
+        </div>
+        <hlm-avatar>
+          <span class="text-white bg-emerald-700" hlmAvatarFallback>RG</span>
+        </hlm-avatar>
+      </div>
+    </header>
+
+    <div class="flex-1 overflow-y-auto p-8 bg-gray-50/50">
+      <router-outlet></router-outlet>
+    </div>
+  </main>
+</div>
