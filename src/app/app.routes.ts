@@ -4,6 +4,8 @@ import {Register} from './auth/register/register';
 import {DashboardLayout} from './dashboard-layout/dashboard-layout';
 import {Home} from './dashboard-layout/home/home';
 import {Comptes} from './dashboard-layout/comptes/comptes';
+import {NotFound} from './not-found/not-found';
+import {Transactions} from './transactions/transactions';
 
 export const routes: Routes = [
   {path: "login", component: Auth},
@@ -14,7 +16,9 @@ export const routes: Routes = [
     component: DashboardLayout,
     children: [
       {path: "home", component:Home},
-      {path: "accounts", component:Comptes}
+      {path: "accounts", component:Comptes},
+      {path: "transactions", component:Transactions}
     ]
-  }
+  },
+  {path:'**',component:NotFound}
 ];

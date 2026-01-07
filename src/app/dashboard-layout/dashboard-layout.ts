@@ -1,10 +1,12 @@
-import { Component } from '@angular/core';
-import {RouterLink, RouterLinkActive, RouterOutlet} from '@angular/router';
-import { HlmSidebarImports } from '@spartan-ng/helm/sidebar';
-import { LucideAngularModule } from 'lucide-angular';
+import {Component, inject} from '@angular/core';
+import {Router, RouterLink, RouterLinkActive, RouterOutlet} from '@angular/router';
+import {HlmSidebarImports} from '@spartan-ng/helm/sidebar';
+import {LucideAngularModule} from 'lucide-angular';
 import {HlmButton} from '@spartan-ng/helm/button';
 import {HlmInputImports} from '@spartan-ng/helm/input';
-import { HlmAvatarImports } from '@spartan-ng/helm/avatar';
+import {HlmAvatarImports} from '@spartan-ng/helm/avatar';
+import {AuthService} from '../services/auth';
+import {Role, User} from '../types/user.type';
 
 
 @Component({
@@ -19,6 +21,28 @@ import { HlmAvatarImports } from '@spartan-ng/helm/avatar';
   templateUrl: './dashboard-layout.html',
 })
 export class DashboardLayout {
+
+  private authService = inject(AuthService);
+  private router = inject(Router);
+
+  //protected readonly user: User | null = this.authService.getUser()
+  protected readonly user: User | null = {
+    id:"kopkjojojo",
+    nom:"joan",
+    prenom:"kekeli",
+    email:"joan@gmail.com",
+    telephone:"jaoajaoja",
+    role:Role.ADMIN
+  }
+
+
+
+  constructor() {
+    if (!this.user) {
+    //  this.router.navigate(['/login']).then(r => (""));
+    }
+  }
+
   protected readonly NavItems = [
     {
       title: 'Home',
@@ -26,9 +50,9 @@ export class DashboardLayout {
       icon: 'Home',
     },
     {
-      title: 'Payments',
-      url: '/dashboard/payments',
-      icon: 'CreditCard', // Changé de Settings2 à CreditCard
+      title: 'Transactions',
+      url: '/dashboard/transactions',
+      icon: 'CreditCard',
     },
     {
       title: 'Comptes',
@@ -46,4 +70,6 @@ export class DashboardLayout {
       icon: 'Settings',
     },
   ];
+
+
 }

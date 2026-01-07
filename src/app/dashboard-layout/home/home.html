@@ -1,4 +1,47 @@
-<div class="h-screen p-2">
+<div class="h-screen flex flex-col gap-6 p-2">
+  <div class="mb-5">
+    <h1 class="text-2xl font-bold">Actions Rapides</h1>
+    <div class="grid w-2/3  gap-5 py-4 grid-cols-4">
+
+      <button
+        hlmBtn
+        variant="outline"
+        class="bg-emerald-100 cursor-pointer hover:bg-emerald-200 text-emerald-800  flex items-center gap-2 px-4"
+      >
+        <lucide-icon name="send-horizontal" size="18" class="mr-1"></lucide-icon>
+        <span>Send</span>
+      </button>
+      <button
+        hlmBtn
+        variant="outline"
+        class="bg-emerald-100 cursor-pointer hover:bg-emerald-200 text-emerald-800  flex items-center gap-2 px-4"
+      >
+        <lucide-icon name="arrowLeftToLine" size="18" class="mr-1"></lucide-icon>
+        <span>Recevoir</span>
+      </button>
+      <button
+        hlmBtn
+        variant="outline"
+        class="bg-emerald-100 cursor-pointer hover:bg-emerald-200 text-emerald-800  flex items-center gap-2 px-4"
+      >
+        <lucide-icon name="arrowRightLeft" size="18" class="mr-1"></lucide-icon>
+        <span>Transférer</span>
+      </button>
+      <button
+        hlmBtn
+        variant="outline"
+        class="bg-emerald-100 cursor-pointer hover:bg-emerald-200 text-emerald-800  flex items-center gap-2 px-4"
+      >
+        <lucide-icon name="plus" size="18" class="mr-1"></lucide-icon>
+        <span>Deposer</span>
+      </button>
+
+
+    </div>
+
+
+  </div>
+
   <div class="grid grid-cols-2 gap-3">
 
     <section class="rounded-lg h-75 shadow-none" hlmCard>
@@ -95,6 +138,19 @@
     </section>
 
   </div>
+
+  <div class="flex flex-col gap-2 pb-16">
+    <div class="flex items-center py-4 flex-row gap-4">
+      <h1 class="text-2xl font-bold">Transaction Récente</h1>
+      <span class="text-sm  cursor-pointer hover:underline text-emerald-900">Tout Voir</span>
+    </div>
+    <app-transaction-table
+      [transactions]="_transactions"
+      (download)="genererPDF($event)"
+    />
+  </div>
+
+
 </div>
 
 <style>

@@ -48,7 +48,6 @@ export class Register {
       }));
       this.nationalites.set(mapped);
     });
-
   }
 
   nationalites = signal<Nationality[]>([]);

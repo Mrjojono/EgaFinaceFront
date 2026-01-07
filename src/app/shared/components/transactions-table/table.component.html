@@ -1,0 +1,71 @@
+<div class="bg-white border rounded-md" hlmTableContainer>
+  <table hlmTable>
+    <thead hlmTHead>
+    <tr hlmTr>
+      <th hlmTh class="w-10"></th>
+      <th hlmTh class="w-32">Date</th>
+      <th hlmTh>Bénéficiaire</th>
+      <th hlmTh>Libellé</th>
+      <th hlmTh>Type Compte</th>
+      <th hlmTh class="text-right">Montant</th>
+    </tr>
+    </thead>
+
+    @for (t of transactions(); track t.id) {
+      <tbody hlmTBody hlmCollapsible>
+      <tr hlmTr>
+        <td hlmTd>
+          <button hlmBtn variant="ghost" size="sm" hlmCollapsibleTrigger>
+            <lucide-icon name="chevron-right" class="w-4 h-4 transition-transform duration-200" hlmCollapsibleTrigger/>
+          </button>
+        </td>
+        <td hlmTd class="text-sm text-gray-600">{{ t.date }}</td>
+        <td hlmTd class="font-medium">{{ t.receiver }}</td>
+        <td hlmTd>{{ t.label }}</td>
+        <td hlmTd> Compte Courant</td>
+        <td hlmTd class="text-right font-bold" [ngClass]="t.amount < 0 ? 'text-red-600' : 'text-emerald-600'">
+          {{ (t.amount > 0 ? '+ ' : '') }}{{ t.amount | number:'1.0-0' }} FCFA
+        </td>
+      </tr>
+
+
+      <tr hlmTr class="bg-gray-50/50" hlmCollapsibleContent>
+        <td hlmTd colspan="6" class="p-6">
+          <div class="flex flex-col gap-4 animate-in fade-in slide-in-from-top-1">
+            <h4 class="text-xs font-bold text-emerald-900 uppercase tracking-widest">Détails de la transaction</h4>
+            <div class="grid grid-cols-2 gap-8">
+              <div class="space-y-3">
+                <div class="flex flex-col">
+                  <span class="text-[10px] text-gray-400 font-bold uppercase">Émetteur</span>
+                  <span class="text-sm font-semibold text-gray-800">{{ t.sender }}</span>
+                  <span class="text-xs text-gray-500 font-mono">{{ t.senderAccount }}</span>
+                </div>
+                <div class="flex flex-col">
+                  <span class="text-[10px] text-gray-400 font-bold uppercase">Bénéficiaire</span>
+                  <span class="text-sm font-semibold text-gray-800">{{ t.receiver }}</span>
+                  <span class="text-xs text-gray-500 font-mono">{{ t.receiverAccount }}</span>
+                </div>
+              </div>
+              <div class="space-y-3 border-l pl-8 border-gray-200">
+                <div class="flex justify-between items-center"><span class="text-xs text-gray-500">ID Transaction</span><span
+                  class="text-xs font-mono bg-gray-100 px-2 py-1 rounded">#{{ t.id }}</span></div>
+                <div class="flex justify-between items-center"><span class="text-xs text-gray-500">Frais</span><span
+                  class="text-sm font-medium">{{ t.fees | currency:'EUR' }}</span></div>
+                <div class="flex justify-between items-center"><span class="text-xs text-gray-500">Statut</span><span
+                  class="text-xs font-bold text-emerald-600">{{ t.status }}</span></div>
+              </div>
+            </div>
+            <div class="mt-4 pt-4 border-t border-gray-100 flex justify-end">
+              <button (click)="onDownload(t)" hlmBtn variant="outline" size="sm"
+                      class="bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border-emerald-200 cursor-pointer text-xs gap-2">
+                <lucide-icon name="Download" size="14"></lucide-icon>
+                Télécharger le reçu
+              </button>
+            </div>
+          </div>
+        </td>
+      </tr>
+      </tbody>
+    }
+  </table>
+</div>
