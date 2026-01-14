@@ -1,5 +1,5 @@
-<div class="bg-white border rounded-md" hlmTableContainer>
-  <table hlmTable>
+<div class="bg-white  border rounded-md" hlmTableContainer>
+  <table  hlmTable>
     <thead hlmTHead>
     <tr hlmTr>
       <th hlmTh class="w-10"></th>
@@ -12,7 +12,7 @@
     </thead>
 
     @for (t of transactions(); track t.id) {
-      <tbody hlmTBody hlmCollapsible>
+      <tbody class="p-4" hlmTBody hlmCollapsible>
       <tr hlmTr>
         <td hlmTd>
           <button hlmBtn variant="ghost" size="sm" hlmCollapsibleTrigger>

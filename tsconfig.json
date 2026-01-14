@@ -63,6 +63,12 @@
       ],
       "@spartan-ng/helm/collapsible": [
         "./libs/ui/collapsible/src/index.ts"
+      ],
+      "@spartan-ng/helm/badge": [
+        "./libs/ui/badge/src/index.ts"
+      ],
+      "@spartan-ng/helm/dialog": [
+        "./libs/ui/dialog/src/index.ts"
       ]
     }
   },

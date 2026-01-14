@@ -1,0 +1,49 @@
+<div [formGroup]="form" class="p-6  bg-white rounded-xl">
+  <header class="mb-6">
+    <h2 hlmDialogTitle class="text-xl font-bold text-slate-900">Ajouter un nouveau compte</h2>
+    <p hlmDialogDescription class="text-sm text-slate-500">Saisissez les informations de votre nouveau compte .</p>
+  </header>
+
+  <div class="space-y-5">
+
+    <div class="grid gap-2">
+      <label hlmLabel>Nom du compte</label>
+      <input hlmInput placeholder="Ex: Épargne Vacances" class="w-full"/>
+    </div>
+
+
+    <div class="grid gap-2">
+      <label hlmLabel>Type de compte</label>
+
+      <brn-select formControlName="typeCompte" placeholder="Choisir un type">
+        <hlm-select-trigger class="w-full">
+          <hlm-select-value/>
+        </hlm-select-trigger>
+        <hlm-select-content>
+          <hlm-option value="courant">Courant</hlm-option>
+          <hlm-option value="epargne">Épargne</hlm-option>
+          <hlm-option value="business">Business</hlm-option>
+        </hlm-select-content>
+      </brn-select>
+    </div>
+
+
+    <div class="grid gap-2">
+      <div class="flex gap-1.5 flex-row">
+        <label hlmLabel>Solde initial </label><span class="text-sm">(un solde initial est requis pour la creation de compte)</span>
+      </div>
+
+      <input type="number" hlmInput formControlName="solde" placeholder="0.00 FCFA" class="w-full">
+    </div>
+  </div>
+
+  <div class="flex justify-end gap-3 mt-8 pt-4 border-t border-slate-50">
+    <button hlmBtn variant="ghost" (click)="close()">Annuler</button>
+    <button hlmBtn
+            class="bg-emerald-600 hover:bg-emerald-700 text-white"
+            [disabled]="form.invalid"
+            (click)="save()">
+      Créer le compte
+    </button>
+  </div>
+</div>

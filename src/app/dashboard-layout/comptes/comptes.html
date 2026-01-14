@@ -1,21 +1,50 @@
-<div >
+<div>
   <header class="flex flex-row justify-between items-center mb-6">
     <div>
-      <h1 class="text-3xl font-bold tracking-tight">Mes Comptes </h1>
+      <h1 class="text-3xl font-bold tracking-tight">Mes Comptes</h1>
       <p class="text-muted-foreground">Consultez et gérez vos flux financiers</p>
     </div>
 
     <div class="flex flex-row gap-3">
-      <button hlmBtn class="bg-emerald-600 hover:bg-emerald-700 rounded text-white flex items-center gap-2">
+      <button hlmBtn class="bg-emerald-600 hover:bg-emerald-700 rounded-lg text-white flex items-center gap-2">
         <lucide-icon name="plus" size="18"></lucide-icon>
-          Ajouter un nouveau Compte
+        Ajouter un nouveau Compte
       </button>
     </div>
   </header>
 
-  <section class="mt-10  bg-white rounded" hlmCard>
-    <div class=" flex flex-row flex-wrap items-end justify-between gap-4" hlmCardContent>
+  <section class="mt-10 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
 
+    <!-- Carte de compte existante -->
+    <div hlmCard class="rounded-lg bg-white overflow-hidden ">
+      <div hlmCardHeader class="flex flex-row items-center justify-between pb-2">
+        <h3 hlmCardTitle class="text-xl font-medium text-muted-foreground">Compte Courant</h3>
+        <lucide-icon name="wallet" size="18" class="text-emerald-600"></lucide-icon>
+      </div>
+
+      <div hlmCardContent>
+        <div class="text-2xl font-bold tracking-tight">21 099 FCFA</div>
+        <span hlmBadge class="bg-emerald-100 text-emerald-700 border-emerald-200 px-2.5 py-0.5 rounded-full text-[10px] uppercase tracking-wider font-bold">
+          Actif
+        </span>
+      </div>
+
+      <div hlmCardFooter class="flex flex-row gap-3 pt-4 border-t border-gray-50 bg-gray-50/50">
+        <button hlmBtn variant="outline" size="sm" class="flex-1 bg-white">Détails</button>
+        <button hlmBtn size="sm" class="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white">
+          <lucide-icon name="plus" size="14"></lucide-icon>
+          Transaction
+        </button>
+      </div>
     </div>
+
+
+    <button (click)="openAddCompte()" class="group flex flex-col items-center justify-center p-4 border-2 border-dashed border-slate-200 rounded-lg bg-transparent hover:bg-white hover:border-emerald-400 transition-all duration-300 min-h-35">
+      <div class="p-2 rounded-full bg-slate-50 group-hover:bg-emerald-50 transition-colors mb-2">
+        <lucide-icon name="plus" size="20" class="text-slate-400 group-hover:text-emerald-600"></lucide-icon>
+      </div>
+      <span class="text-slate-900 font-bold text-sm">Ajouter un compte</span>
+    </button>
+
   </section>
 </div>

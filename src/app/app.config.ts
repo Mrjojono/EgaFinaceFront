@@ -10,7 +10,7 @@ import {routes} from './app.routes';
 import {
   LucideAngularModule,
   Home, User, Settings, LogOut, Menu, Wallet, Settings2, UserCheck, CreditCard, Landmark,
-  Search, Copy, Plus, ChevronRight,Download, SendHorizontal,ArrowLeftToLine,ArrowRightLeft, ChevronLeft
+  Search, Copy, Plus, ChevronRight,Download, SendHorizontal,ArrowLeftToLine,ArrowRightLeft, ChevronLeft,ArrowUpRight
 } from 'lucide-angular';
 
 // Creation d'un intercepteur
@@ -46,7 +46,7 @@ export const appConfig: ApplicationConfig = {
       LucideAngularModule.pick({
         Home, User, Settings, LogOut, Menu, Wallet, Settings2,
         UserCheck, Plus, CreditCard, Landmark, Search, Copy, ChevronRight,Download,
-        SendHorizontal,ArrowLeftToLine,ArrowRightLeft, ChevronLeft
+        SendHorizontal,ArrowLeftToLine,ArrowRightLeft, ChevronLeft,ArrowUpRight
       })
     )
   ],

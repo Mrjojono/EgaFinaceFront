@@ -30,6 +30,7 @@ import {CommonModule, DecimalPipe} from '@angular/common';
   templateUrl: './transactions.html',
 })
 export class Transactions {
+
   protected readonly transactionTypes = [
     {value: 'all', label: 'Toutes les transactions'},
     {value: 'deposit', label: 'Dépôt'},
@@ -39,17 +40,43 @@ export class Transactions {
     {value: 'refund', label: 'Remboursement'},
     {value: 'fee', label: 'Frais bancaires'}
   ];
-
   protected readonly transactions = signal([
-    { id: 'TXN-001', date: '2024-03-21', description: 'Virement Salaire', type: 'virement', amount: 250000, status: 'Complété' },
-    { id: 'TXN-002', date: '2024-03-20', description: 'Achat Carrefour', type: 'Retrait', amount: -15400, status: 'Complété' },
-    { id: 'TXN-003', date: '2024-03-19', description: 'Netflix', type: 'Retrait', amount: -5000, status: 'En attente' },
-    { id: 'TXN-004', date: '2024-03-18', description: 'Remboursement prêt', type: 'depot', amount: 25000, status: 'Complété' },
-    { id: 'TXN-005', date: '2024-03-15', description: 'Frais bancaires', type: 'retrait', amount: -2500, status: 'Échoué' }
+    {
+      id: 'TXN-001',
+      date: '2024-03-21',
+      description: 'Virement Salaire',
+      type: 'virement',
+      amount: 250000,
+      status: 'Complété'
+    },
+    {
+      id: 'TXN-002',
+      date: '2024-03-20',
+      description: 'Achat Carrefour',
+      type: 'Retrait',
+      amount: -15400,
+      status: 'Complété'
+    },
+    {id: 'TXN-003', date: '2024-03-19', description: 'Netflix', type: 'Retrait', amount: -5000, status: 'En attente'},
+    {
+      id: 'TXN-004',
+      date: '2024-03-18',
+      description: 'Remboursement prêt',
+      type: 'depot',
+      amount: 25000,
+      status: 'Complété'
+    },
+    {
+      id: 'TXN-005',
+      date: '2024-03-15',
+      description: 'Frais bancaires',
+      type: 'retrait',
+      amount: -2500,
+      status: 'Échoué'
+    }
   ]);
-
   protected currentPage = signal(1);
-  protected pageSize = signal(3);
+  protected pageSize = signal(5);
 
 
   protected paginatedTransactions = computed(() => {
