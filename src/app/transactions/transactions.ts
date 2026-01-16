@@ -1,4 +1,4 @@
-import {Component, computed, signal} from '@angular/core';
+import {Component, computed, inject, signal, ViewContainerRef} from '@angular/core';
 import {HlmButtonImports} from '@spartan-ng/helm/button';
 import {LucideAngularModule} from 'lucide-angular';
 import {HlmCardImports} from '@spartan-ng/helm/card';
@@ -15,6 +15,9 @@ import {ReactiveFormsModule} from '@angular/forms';
 import {HlmLabelImports} from '@spartan-ng/helm/label';
 import {HlmTableImports} from '@spartan-ng/helm/table';
 import {CommonModule, DecimalPipe} from '@angular/common';
+import {BrnDialogService} from '@spartan-ng/brain/dialog';
+import {AddCompte} from '../shared/components/add-compte/add-compte';
+import {DoTransaction} from '../shared/components/do-transaction/do-transaction';
 
 @Component({
   selector: 'app-transactions',
@@ -100,4 +103,15 @@ export class Transactions {
     }
   }
 
+
+  private _dialogService = inject(BrnDialogService);
+  private _vcr = inject(ViewContainerRef);
+
+  openAddCompte() {
+    const dialogRef = this._dialogService.open(DoTransaction);
+
+    dialogRef.closed$.subscribe((result) => {
+      console.log('Le dialogue est fermé', result);
+    });
+  }
 }

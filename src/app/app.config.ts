@@ -9,8 +9,30 @@ import {provideAnimations} from '@angular/platform-browser/animations';
 import {routes} from './app.routes';
 import {
   LucideAngularModule,
-  Home, User, Settings, LogOut, Menu, Wallet, Settings2, UserCheck, CreditCard, Landmark,
-  Search, Copy, Plus, ChevronRight,Download, SendHorizontal,ArrowLeftToLine,ArrowRightLeft, ChevronLeft,ArrowUpRight
+  Home,
+  User,
+  Settings,
+  LogOut,
+  Menu,
+  Wallet,
+  Settings2,
+  UserCheck,
+  CreditCard,
+  Landmark,
+  ArrowRight,
+  ChevronDown,
+  Search,
+  Copy,
+  Plus,
+  ChevronRight,
+  Download,
+  SendHorizontal,
+  ArrowLeftToLine,
+  ArrowRightLeft,
+  ChevronLeft,
+  ArrowUpRight,
+  Smartphone,
+  Waves
 } from 'lucide-angular';
 
 // Creation d'un intercepteur
@@ -45,8 +67,9 @@ export const appConfig: ApplicationConfig = {
     importProvidersFrom(
       LucideAngularModule.pick({
         Home, User, Settings, LogOut, Menu, Wallet, Settings2,
-        UserCheck, Plus, CreditCard, Landmark, Search, Copy, ChevronRight,Download,
-        SendHorizontal,ArrowLeftToLine,ArrowRightLeft, ChevronLeft,ArrowUpRight
+        UserCheck, Plus, CreditCard, Landmark, Search, Copy, ChevronRight, Download,
+        SendHorizontal, ArrowLeftToLine, ArrowRightLeft, ChevronLeft, ArrowUpRight, ArrowRight, ChevronDown,
+        Smartphone, Waves
       })
     )
   ],

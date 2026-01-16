@@ -6,7 +6,7 @@ import {Home} from './dashboard-layout/home/home';
 import {Comptes} from './dashboard-layout/comptes/comptes';
 import {NotFound} from './not-found/not-found';
 import {Transactions} from './transactions/transactions';
-
+import {Settings} from './settings/settings';
 export const routes: Routes = [
   {path: "login", component: Auth},
   {path: "register", component: Register},
@@ -17,7 +17,8 @@ export const routes: Routes = [
     children: [
       {path: "home", component:Home},
       {path: "accounts", component:Comptes},
-      {path: "transactions", component:Transactions}
+      {path: "transactions", component:Transactions},
+      {path: "settings", component:Settings}
     ]
   },
   {path:'**',component:NotFound}

@@ -13,4 +13,15 @@ export const LOGIN_MUTATION = gql`
       }
     }
   }
+  mutation Register($email: String!, $nom: String!, $prenom: String!, $nationalite: String!, $password: String!) {
+    createClient(input: {email: $email, nom: $nom, prenom: $prenom, nationalite: $nationalite, password: $password}) {
+      id,
+      nom,
+      prenom,
+      email
+      telephone,
+      adresse,
+      dateNaissance
+    }
+  }
 `;

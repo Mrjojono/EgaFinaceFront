@@ -7,12 +7,13 @@
 
     <div class="flex flex-row gap-3">
 
-      <button hlmBtn variant="outline" class="flex rounded items-center gap-2">
+      <button hlmBtn variant="outline" class="flex rounded-lg items-center gap-2">
         <lucide-icon name="download" size="18"></lucide-icon>
         Export
       </button>
 
-      <button hlmBtn class="bg-emerald-600 hover:bg-emerald-700 rounded text-white flex items-center gap-2">
+      <button (click)="openAddCompte()" hlmBtn
+              class="bg-emerald-600 hover:bg-emerald-700 rounded-lg text-white flex items-center gap-2">
         <lucide-icon name="plus" size="18"></lucide-icon>
         Nouvelle Transaction
       </button>
