@@ -1,7 +1,7 @@
 <div class="grid grid-cols-1 lg:grid-cols-2 min-h-screen">
 
-  <!-- Section Gauche (Illustration) -->
-  <div class="hidden lg:flex bg-emerald-100/50 h-screen justify-between flex-col p-12 gap-10">
+
+  <div class="hidden lg:flex bg-emerald-100/50 min-h-screen justify-between flex-col p-12 gap-10">
     <h1 class="text-2xl font-bold text-emerald-900">Ega Finance</h1>
     <figure class="mx-auto">
       <img src="/profile.svg" alt="Illustration" class="w-96 h-96">
@@ -17,29 +17,139 @@
 
       <div class="text-start">
         <h2 class="text-4xl font-bold text-gray-900 tracking-tight">S'enregistrer</h2>
-        <p class="text-gray-500 mt-3 text-lg">
-          Étape :
-          <span class="text-emerald-600 font-bold uppercase text-sm">
-            {{ steps() === 'email' ? '1/4' : steps() === 'username' ? '2/4' : steps() === "nationalite" ? '3/4' : '4/4' }}
-          </span>
-        </p>
+
+        @if (steps() !== 'initiale' && steps() !== 'activation') {
+          <p class="text-gray-500 mt-3 text-lg">
+            Étape :
+            <span class="text-emerald-600 font-bold uppercase text-sm">
+              {{
+                steps() === 'email' ? '1/4' :
+                  steps() === 'username' ? '2/4' :
+                    steps() === 'nationalite' ? '3/4' : '4/4'
+              }}
+      </span>
+          </p>
+        }
       </div>
 
       <form class="space-y-6" [formGroup]="form" (ngSubmit)="onSubmit()">
 
 
+        @if (steps() === StepEnum.initiale) {
+          <div class="space-y-6 animate-in fade-in slide-in-from-right-4 duration-300">
+            <p class="text-gray-600 text-center mb-8">Pour mieux vous accompagner, dites-nous en plus sur vous.</p>
+
+            <div class="grid grid-cols-1 gap-4">
+
+              <button
+                type="button"
+                (click)="goToStep(StepEnum.Email)"
+                class="flex items-center gap-4 p-5 rounded-2xl border-2 border-gray-100 hover:border-emerald-600 hover:bg-emerald-50 transition-all text-start group">
+                <div
+                  class="bg-emerald-100 text-emerald-600 p-3 rounded-xl group-hover:bg-emerald-600 group-hover:text-white transition-colors">
+                  <lucide-icon name="user-plus" size="24"></lucide-icon>
+                </div>
+                <div>
+                  <h3 class="font-bold text-gray-900">Je suis nouveau ici</h3>
+                  <p class="text-sm text-gray-500">Ouvrir un compte en moins de 2 minutes.</p>
+                </div>
+              </button>
+
+
+              <button
+                type="button"
+                (click)="goToStep(StepEnum.activation)"
+                class="flex items-center gap-4 p-5 rounded-2xl border-2 border-gray-100 hover:border-emerald-600 hover:bg-emerald-50 transition-all text-start group">
+                <div
+                  class="bg-blue-100 text-blue-600 p-3 rounded-xl group-hover:bg-blue-600 group-hover:text-white transition-colors">
+                  <lucide-icon name="landmark" size="24"></lucide-icon>
+                </div>
+                <div>
+                  <h3 class="font-bold text-gray-900">Je suis déjà client Ega</h3>
+                  <p class="text-sm text-gray-500">Activer mes accès banque en ligne.</p>
+                </div>
+              </button>
+            </div>
+          </div>
+        }
+
+
+        @if (steps() === 'activation') {
+          <div class="space-y-6 animate-in fade-in slide-in-from-right-4 duration-300">
+
+
+            <div class="bg-blue-50 p-4 rounded-xl border border-blue-100 mb-6">
+              <p class="text-sm text-blue-800 leading-relaxed">
+                <span class="font-bold">Activation :</span> Veuillez saisir l'email lié à votre compte bancaire et votre
+                identifiant unique (fourni lors de votre souscription en agence).
+              </p>
+            </div>
+
+            <div class="space-y-5">
+
+              <div class="space-y-2">
+                <label hlmLabel for="email_activation" class="text-sm font-bold text-gray-700">Adresse Email</label>
+                <input
+                  hlmInput
+                  type="email"
+                  id="email_activation"
+                  formControlName="email"
+                  placeholder="joan.doe@exemple.com"
+                  class="w-full py-6 bg-gray-50/30">
+              </div>
+
+
+              <div class="space-y-2">
+                <label hlmLabel for="identifiant" class="text-sm font-bold text-gray-700">Identifiant Unique
+                  Client</label>
+                <input
+                  hlmInput
+                  type="text"
+                  id="identifiant"
+                  formControlName="identifiant"
+                  placeholder="CT-000000"
+                  class="w-full py-6 bg-gray-50/30 font-mono tracking-widest uppercase">
+                <p class="text-[11px] text-gray-400">Exemple : CT-123456. Disponible sur vos relevés de compte.</p>
+              </div>
+            </div>
+
+
+            <div class="flex gap-3 pt-4">
+              <button
+                type="button"
+                (click)="goToStep(StepEnum.initiale)"
+                hlmBtn
+                variant="outline"
+              class="flex-1 py-6">
+                Retour
+              </button>
+
+              <button
+                type="button"
+                (click)="onSubmitActivation()"
+                hlmBtn
+                class="flex-[2] bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-6 ">
+                Vérifier mon identité
+              </button>
+            </div>
+          </div>
+        }
+
         @if (steps() === 'email') {
+
           <div class="space-y-2 animate-in fade-in slide-in-from-right-4 duration-300">
             <label hlmLabel for="email" class="text-sm font-semibold text-gray-700">Votre adresse Email</label>
             <input hlmInput type="email" id="email" formControlName="email" placeholder="joan@gmail.com"
-                   class="w-full py-6 bg-gray-50/50">
-            <button
-              type="button"
-              (click)="goToStep(StepEnum.Username)"
-              hlmBtn
-              class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-6 mt-4">
-              Continuer
-            </button>
+                   class="w-full py-6">
+
+            <div class="flex gap-3 mt-4">
+              <button type="button" (click)="goToStep(StepEnum.initiale)" hlmBtn variant="outline" class="flex-1 py-6">
+                Retour
+              </button>
+              <button type="button" (click)="goToStep(StepEnum.Username)" hlmBtn
+                      class="flex-2 bg-emerald-600 hover:bg-emerald-700 py-6">Continuer
+              </button>
+            </div>
           </div>
         }
 
@@ -106,7 +216,6 @@
             </div>
           </div>
         }
-
 
         @if (steps() === 'password') {
 

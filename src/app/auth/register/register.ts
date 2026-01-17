@@ -7,12 +7,15 @@ import {HlmSelectImports} from '@spartan-ng/helm/select';
 import {RouterLink} from '@angular/router';
 import {FormBuilder, ReactiveFormsModule, Validators} from '@angular/forms';
 import {email} from '@angular/forms/signals';
+import {LucideAngularModule} from 'lucide-angular';
 
 enum StepEnum {
   Email = 'email',
   Username = 'username',
   Password = 'password',
   Nationalite = 'nationalite',
+  initiale = 'initiale',
+  activation = 'activation'
 }
 
 type Nationality = {
@@ -25,19 +28,22 @@ type Nationality = {
 @Component({
   selector: 'app-register',
   standalone: true,
-  imports: [HlmInputImports, HlmLabelImports, HlmButtonImports, BrnSelectImports, HlmSelectImports, BrnSelect, RouterLink, ReactiveFormsModule],
+  imports: [HlmInputImports, HlmLabelImports, HlmButtonImports, BrnSelectImports, HlmSelectImports, BrnSelect, RouterLink, ReactiveFormsModule, LucideAngularModule],
   templateUrl: './register.html',
 })
 export class Register {
 
   private fb = inject(FormBuilder);
+
   form = this.fb.group({
     email: ['', [Validators.required, Validators.email]],
     nom: ['', Validators.required],
     prenom: ['', Validators.required],
     nationalite: ['', Validators.required],
     password: ['', Validators.required],
+    identifiant: ['', Validators.required],
   });
+
 
   constructor() {
     fetch('https://restcountries.com/v3.1/all?fields=name,flags')
@@ -51,7 +57,7 @@ export class Register {
   }
 
   nationalites = signal<Nationality[]>([]);
-  steps = signal<StepEnum>(StepEnum.Email);
+  steps = signal<StepEnum>(StepEnum.initiale);
 
   goToStep(step: StepEnum) {
     this.steps.set(step);
@@ -63,6 +69,9 @@ export class Register {
     console.log(this.form.value);
   }
 
+  onSubmitActivation() {
+
+  }
 
   protected readonly StepEnum = StepEnum;
 

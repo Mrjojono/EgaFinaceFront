@@ -1,4 +1,6 @@
 <div class="h-screen flex flex-col gap-6 p-2">
+
+
   <div class="mb-10">
     <h1 class="text-xl font-bold text-slate-800 mb-6">Actions Rapides</h1>
 
@@ -45,17 +47,17 @@
 
   <div class="grid grid-cols-2 gap-3">
 
-    <section class="rounded-lg h-75 shadow-none" hlmCard>
+
+    <section class="rounded-lg h-[350px] shadow-none flex flex-col" hlmCard>
       <div hlmCardHeader>
         <h1 class="font-normal text-gray-800" hlmCardTitle>Solde Total disponible</h1>
         <div class="flex items-baseline gap-2">
-
           <span class="text-3xl font-bold tracking-tight text-gray-900">{{ totalSolde() | number }}</span>
           <span class="text-lg font-semibold text-emerald-700 uppercase">FCFA</span>
         </div>
       </div>
 
-      <div hlmCardContent class="pt-1">
+      <div hlmCardContent class="pt-1 flex-1">
         <div class="flex flex-row items-center justify-between">
           <h1 class="text-lg font-medium">{{ clickAccount().type }}</h1>
           <div class="flex items-baseline gap-2">
@@ -65,27 +67,24 @@
         </div>
 
         <div class="mt-2 flex items-center gap-2">
-
-          <span class="flex h-2 w-2 rounded-full animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.6)]"
-                [ngClass]="{
-              'bg-emerald-500': clickAccount().etat === 'Actif',
-              'bg-orange-500': clickAccount().etat === 'Bloqué',
-              'bg-red-500': clickAccount().etat === 'Suspendu'
-            }">
-          </span>
+        <span class="flex h-2 w-2 rounded-full animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.6)]"
+              [ngClass]="{
+            'bg-emerald-500': clickAccount().etat === 'Actif',
+            'bg-orange-500': clickAccount().etat === 'Bloqué',
+            'bg-red-500': clickAccount().etat === 'Suspendu'
+          }">
+        </span>
           <span class="text-xs font-bold uppercase tracking-wider opacity-70"
                 [ngClass]="clickAccount().etat === 'Actif' ? 'text-emerald-900' : 'text-gray-900'">
-            Compte {{ clickAccount().etat }}
-          </span>
+          Compte {{ clickAccount().etat }}
+        </span>
         </div>
       </div>
 
       <div hlmCardFooter class="flex flex-row justify-between items-center border-t border-zinc-100 pt-4 mt-2">
         <div class="flex flex-col">
           <span class="text-[10px] uppercase tracking-wider text-zinc-500 font-bold">IBAN</span>
-          <span class="font-mono text-sm text-zinc-800 tracking-tighter">
-            {{ clickAccount().Iban }}
-          </span>
+          <span class="font-mono text-sm text-zinc-800 tracking-tighter">{{ clickAccount().Iban }}</span>
         </div>
         <button hlmBtn variant="ghost" size="sm" class="h-8 w-8 p-0 text-zinc-400 hover:text-emerald-600">
           <lucide-icon name="copy" class="w-4 h-4"></lucide-icon>
@@ -94,7 +93,27 @@
     </section>
 
 
-    <section class="rounded-lg h-75 shadow-none flex flex-col" hlmCard>
+    <section class="h-[350px]">
+      <app-balance-chart
+        class="h-full block"
+        title="Evolution du solde de votre compte"
+        [subtitle]="clickAccount().type"
+        [data]="chartData">
+      </app-balance-chart>
+    </section>
+
+
+    <section class="h-[350px]">
+      <app-balance-chart
+        class="h-full block"
+        title="Evolution du solde de votre compte"
+        [subtitle]="clickAccount().type"
+        [data]="chartData">
+      </app-balance-chart>
+    </section>
+
+
+    <section class="rounded-lg h-[350px] shadow-none flex flex-col" hlmCard>
       <div hlmCardHeader>
         <h1 class="text-2xl font-medium" hlmCardTitle>Mes Comptes</h1>
         <div hlmCardAction class="bg-gray-100 hover:bg-gray-200 transition-colors cursor-pointer rounded p-3">
@@ -102,14 +121,12 @@
         </div>
       </div>
 
-
       <div class="flex-1 overflow-y-auto space-y-2 custom-scrollbar p-4" hlmCardContent>
         @for (account of Accounts; track account.id) {
           <div
             (click)="setClickAccount(account.id)"
             class="group flex items-center justify-between p-1 rounded border transition-all cursor-pointer"
             [ngClass]="isSelected(account.id) ? 'border-emerald-500 bg-emerald-50' : 'border-transparent hover:border-emerald-200 hover:bg-emerald-50/40 opacity-80'">
-
             <div class="flex items-center gap-4">
               <div class="flex size-10 items-center justify-center rounded-full bg-zinc-100 text-zinc-500">
                 <lucide-icon name="wallet" class="size-5"></lucide-icon>
@@ -137,8 +154,8 @@
         </button>
       </div>
     </section>
-
   </div>
+
 
   <div class="flex flex-col gap-2 pb-16">
     <div class="flex items-center py-4 flex-row gap-4">

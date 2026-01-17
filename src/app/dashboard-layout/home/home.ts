@@ -8,7 +8,7 @@ import {Account, EtatCompte} from '../../types/compte.type';
 import {HlmCollapsibleImports} from '@spartan-ng/helm/collapsible';
 import {TransactionTableComponent} from '../../shared/components/transactions-table/table.component';
 import {Transaction} from '../../types/transaction.type';
-
+import { BalanceChartComponent } from '../../shared/components/balance-chart.component'; // Chemin à adapter
 
 @Component({
   selector: 'app-home',
@@ -16,11 +16,15 @@ import {Transaction} from '../../types/transaction.type';
   imports: [HlmCardImports, LucideAngularModule,
     HlmCollapsibleImports,
     HlmButtonImports, CommonModule, HlmTableImports,
-    TransactionTableComponent
+    TransactionTableComponent,
+    BalanceChartComponent
   ],
   templateUrl: './home.html',
 })
 export class Home {
+
+
+  protected chartData = [450, 520, 480, 610, 590, 720, 680];
 
   protected _transactions: Transaction[] = [
     {
