@@ -25,7 +25,6 @@ export class AuthService {
         if (authData) {
           sessionStorage.setItem('token', authData.token);
           sessionStorage.setItem('user', JSON.stringify(authData.user));
-
           console.log("Utilisateur connecté :", authData.user.nom);
         }
         return authData?.token;
