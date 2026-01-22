@@ -1,6 +1,6 @@
 <div class="grid grid-cols-1 lg:grid-cols-2 min-h-screen">
 
-
+  <!-- Panneau gauche - Branding -->
   <div class="hidden lg:flex bg-emerald-100/50 min-h-screen justify-between flex-col p-12 gap-10">
     <h1 class="text-2xl font-bold text-emerald-900">Ega Finance</h1>
     <figure class="mx-auto">
@@ -11,10 +11,11 @@
     </p>
   </div>
 
-
+  <!-- Panneau droit - Formulaires -->
   <div class="flex flex-col justify-center items-center p-8 lg:p-16 bg-white">
     <div class="w-full max-w-md space-y-8">
 
+      <!-- En-tête -->
       <div class="text-start">
         <h2 class="text-4xl font-bold text-gray-900 tracking-tight">S'enregistrer</h2>
 
@@ -23,24 +24,30 @@
             Étape :
             <span class="text-emerald-600 font-bold uppercase text-sm">
               {{
-                steps() === 'email' ? '1/4' :
-                  steps() === 'username' ? '2/4' :
-                    steps() === 'nationalite' ? '3/4' : '4/4'
+                steps() === 'email' ? '1/5' :
+                  steps() === 'username' ? '2/5' :
+                    steps() === 'sexe' ? '3/5' :
+                      steps() === 'nationalite' ? '4/5' : '5/5'
               }}
-      </span>
+            </span>
           </p>
         }
       </div>
 
-      <form class="space-y-6" [formGroup]="form" (ngSubmit)="onSubmit()">
+      <!-- FORMULAIRE D'INSCRIPTION (nouveau client) -->
+      <form
+        *ngIf="steps() !== StepEnum.activation"
+        [formGroup]="registerForm"
+        (ngSubmit)="onSubmit()"
+        class="space-y-6">
 
-
+        <!-- Étape initiale : Choix du type d'inscription -->
         @if (steps() === StepEnum.initiale) {
           <div class="space-y-6 animate-in fade-in slide-in-from-right-4 duration-300">
             <p class="text-gray-600 text-center mb-8">Pour mieux vous accompagner, dites-nous en plus sur vous.</p>
 
             <div class="grid grid-cols-1 gap-4">
-
+              <!-- Nouveau client -->
               <button
                 type="button"
                 (click)="goToStep(StepEnum.Email)"
@@ -55,7 +62,7 @@
                 </div>
               </button>
 
-
+              <!-- Client existant -->
               <button
                 type="button"
                 (click)="goToStep(StepEnum.activation)"
@@ -73,96 +80,69 @@
           </div>
         }
 
-
-        @if (steps() === 'activation') {
-          <div class="space-y-6 animate-in fade-in slide-in-from-right-4 duration-300">
-
-
-            <div class="bg-blue-50 p-4 rounded-xl border border-blue-100 mb-6">
-              <p class="text-sm text-blue-800 leading-relaxed">
-                <span class="font-bold">Activation :</span> Veuillez saisir l'email lié à votre compte bancaire et votre
-                identifiant unique (fourni lors de votre souscription en agence).
-              </p>
-            </div>
-
-            <div class="space-y-5">
-
-              <div class="space-y-2">
-                <label hlmLabel for="email_activation" class="text-sm font-bold text-gray-700">Adresse Email</label>
-                <input
-                  hlmInput
-                  type="email"
-                  id="email_activation"
-                  formControlName="email"
-                  placeholder="joan.doe@exemple.com"
-                  class="w-full py-6 bg-gray-50/30">
-              </div>
-
-
-              <div class="space-y-2">
-                <label hlmLabel for="identifiant" class="text-sm font-bold text-gray-700">Identifiant Unique
-                  Client</label>
-                <input
-                  hlmInput
-                  type="text"
-                  id="identifiant"
-                  formControlName="identifiant"
-                  placeholder="CT-000000"
-                  class="w-full py-6 bg-gray-50/30 font-mono tracking-widest uppercase">
-                <p class="text-[11px] text-gray-400">Exemple : CT-123456. Disponible sur vos relevés de compte.</p>
-              </div>
-            </div>
-
-
-            <div class="flex gap-3 pt-4">
-              <button
-                type="button"
-                (click)="goToStep(StepEnum.initiale)"
-                hlmBtn
-                variant="outline"
-              class="flex-1 py-6">
-                Retour
-              </button>
-
-              <button
-                type="button"
-                (click)="onSubmitActivation()"
-                hlmBtn
-                class="flex-[2] bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-6 ">
-                Vérifier mon identité
-              </button>
-            </div>
-          </div>
-        }
-
+        <!-- Étape 1 : Email -->
         @if (steps() === 'email') {
-
           <div class="space-y-2 animate-in fade-in slide-in-from-right-4 duration-300">
             <label hlmLabel for="email" class="text-sm font-semibold text-gray-700">Votre adresse Email</label>
-            <input hlmInput type="email" id="email" formControlName="email" placeholder="joan@gmail.com"
-                   class="w-full py-6">
+            <input
+              hlmInput
+              type="email"
+              id="email"
+              formControlName="email"
+              placeholder="joan@gmail.com"
+              class="w-full py-6"
+              [class.border-red-500]="registerForm.get('email')?.invalid && registerForm.get('email')?.touched">
+
+            @if (registerForm.get('email')?.invalid && registerForm.get('email')?.touched) {
+              <p class="text-xs text-red-600 mt-1">Veuillez saisir une adresse email valide.</p>
+            }
 
             <div class="flex gap-3 mt-4">
               <button type="button" (click)="goToStep(StepEnum.initiale)" hlmBtn variant="outline" class="flex-1 py-6">
                 Retour
               </button>
-              <button type="button" (click)="goToStep(StepEnum.Username)" hlmBtn
-                      class="flex-2 bg-emerald-600 hover:bg-emerald-700 py-6">Continuer
+              <button
+                type="button"
+                (click)="goToStep(StepEnum.Username)"
+                hlmBtn
+                [disabled]="registerForm.get('email')?.invalid"
+                class="flex-2 bg-emerald-600 hover:bg-emerald-700 py-6 disabled:opacity-50">
+                Continuer
               </button>
             </div>
           </div>
         }
 
+        <!-- Étape 2 : Nom et Prénom -->
         @if (steps() === 'username') {
           <div class="space-y-4 animate-in fade-in slide-in-from-right-4 duration-300">
             <div class="grid grid-cols-2 gap-4">
               <div class="space-y-2">
                 <label hlmLabel for="nom">Nom</label>
-                <input formControlName="nom" hlmInput id="nom" placeholder="Doe" class="w-full py-6">
+                <input
+                  formControlName="nom"
+                  hlmInput
+                  id="nom"
+                  placeholder="Doe"
+                  class="w-full py-6"
+                  [class.border-red-500]="registerForm.get('nom')?.invalid && registerForm.get('nom')?.touched">
+                @if (registerForm.get('nom')?.invalid && registerForm.get('nom')?.touched) {
+                  <p class="text-xs text-red-600 mt-1">Le nom est requis (min. 2 caractères).</p>
+                }
               </div>
+
               <div class="space-y-2">
                 <label hlmLabel for="prenom">Prénom</label>
-                <input formControlName="prenom" hlmInput id="prenom" placeholder="Joan" class="w-full py-6">
+                <input
+                  formControlName="prenom"
+                  hlmInput
+                  id="prenom"
+                  placeholder="Joan"
+                  class="w-full py-6"
+                  [class.border-red-500]="registerForm.get('prenom')?.invalid && registerForm.get('prenom')?.touched">
+                @if (registerForm.get('prenom')?.invalid && registerForm.get('prenom')?.touched) {
+                  <p class="text-xs text-red-600 mt-1">Le prénom est requis (min. 2 caractères).</p>
+                }
               </div>
             </div>
 
@@ -170,46 +150,135 @@
               <button type="button" (click)="goToStep(StepEnum.Email)" hlmBtn variant="outline"
                       class="flex-1 py-6 border-emerald-600 text-emerald-600">Retour
               </button>
-              <button type="button" (click)="goToStep(StepEnum.Nationalite)" hlmBtn
-                      class="flex-2 bg-emerald-600 hover:bg-emerald-700 py-6">Suivant
+              <button
+                type="button"
+                (click)="goToStep(StepEnum.Sexe)"
+                hlmBtn
+                [disabled]="registerForm.get('nom')?.invalid || registerForm.get('prenom')?.invalid"
+                class="flex-2 bg-emerald-600 hover:bg-emerald-700 py-6 disabled:opacity-50">
+                Suivant
               </button>
             </div>
           </div>
         }
 
+        <!-- NOUVELLE ÉTAPE 3 : Sexe -->
+        @if (steps() === StepEnum.Sexe) {
+          <div class="space-y-6 animate-in fade-in slide-in-from-right-4 duration-300">
+            <div class="space-y-2">
+              <label hlmLabel class="text-sm font-semibold text-gray-700">Votre sexe</label>
+              <p class="text-sm text-gray-500 mb-4">Sélectionnez votre sexe</p>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4">
+              <!-- Option Homme -->
+              <button
+                type="button"
+                (click)="selectSexe(Sexe.HOMME)"
+                [class.border-emerald-600]="registerForm.get('sexe')?.value === Sexe.HOMME"
+                [class.bg-emerald-50]="registerForm.get('sexe')?.value === Sexe.HOMME"
+                class="flex flex-col items-center gap-3 p-6 rounded-2xl border-2 border-gray-100 hover:border-emerald-600 hover:bg-emerald-50 transition-all group">
+                <div
+                  [class.bg-emerald-600]="registerForm.get('sexe')?.value === Sexe.HOMME"
+                  [class.text-white]="registerForm.get('sexe')?.value === Sexe.HOMME"
+                  class="bg-blue-100 text-blue-600 p-4 rounded-xl group-hover:bg-emerald-600 group-hover:text-white transition-colors">
+                  <lucide-icon name="user" size="32"></lucide-icon>
+                </div>
+                <span
+                  [class.text-emerald-600]="registerForm.get('sexe')?.value === Sexe.HOMME"
+                  [class.font-bold]="registerForm.get('sexe')?.value === Sexe.HOMME"
+                  class="font-semibold text-gray-900">
+                  Homme
+                </span>
+              </button>
+
+              <!-- Option Femme -->
+              <button
+                type="button"
+                (click)="selectSexe(Sexe.FEMME)"
+                [class.border-emerald-600]="registerForm.get('sexe')?.value === Sexe.FEMME"
+                [class.bg-emerald-50]="registerForm.get('sexe')?.value === Sexe.FEMME"
+                class="flex flex-col items-center gap-3 p-6 rounded-2xl border-2 border-gray-100 hover:border-emerald-600 hover:bg-emerald-50 transition-all group">
+                <div
+                  [class.bg-emerald-600]="registerForm.get('sexe')?.value === Sexe.FEMME"
+                  [class.text-white]="registerForm.get('sexe')?.value === Sexe.FEMME"
+                  class="bg-pink-100 text-pink-600 p-4 rounded-xl group-hover:bg-emerald-600 group-hover:text-white transition-colors">
+                  <lucide-icon name="user" size="32"></lucide-icon>
+                </div>
+                <span
+                  [class.text-emerald-600]="registerForm.get('sexe')?.value === Sexe.FEMME"
+                  [class.font-bold]="registerForm.get('sexe')?.value === Sexe.FEMME"
+                  class="font-semibold text-gray-900">
+                  Femme
+                </span>
+              </button>
+            </div>
+
+            @if (registerForm.get('sexe')?.invalid && registerForm.get('sexe')?.touched) {
+              <p class="text-xs text-red-600 text-center mt-2">Veuillez sélectionner votre sexe.</p>
+            }
+
+            <div class="flex gap-3 pt-4">
+              <button type="button" (click)="goToStep(StepEnum.Username)" hlmBtn variant="outline"
+                      class="flex-1 py-6 border-emerald-600 text-emerald-600">
+                Retour
+              </button>
+              <button
+                type="button"
+                (click)="goToStep(StepEnum.Nationalite)"
+                hlmBtn
+                [disabled]="registerForm.get('sexe')?.invalid"
+                class="flex-[2] bg-emerald-600 hover:bg-emerald-700 py-6 disabled:opacity-50">
+                Suivant
+              </button>
+            </div>
+          </div>
+        }
+
+        <!-- Étape 4 : Nationalité -->
         @if (steps() === StepEnum.Nationalite) {
           <div class="flex justify-center w-full">
             <div class="w-full max-w-xl space-y-6 animate-in fade-in slide-in-from-right-4 duration-300">
-              <brn-select formControlName="nationalite" class="w-full" placeholder="Select an option">
-                <hlm-select-trigger class="w-full">
-                  <hlm-select-value/>
-                </hlm-select-trigger>
+              <div class="space-y-2">
+                <label hlmLabel class="text-sm font-semibold text-gray-700">Votre nationalité</label>
+                <brn-select formControlName="nationalite" class="w-full" placeholder="Sélectionnez votre pays">
+                  <hlm-select-trigger class="w-full">
+                    <hlm-select-value/>
+                  </hlm-select-trigger>
 
-                <hlm-select-content class="max-h-64 overflow-y-auto">
-                  @for (nat of nationalites(); track nat.name) {
-                    <hlm-option [value]="nat.name">
-                      <div class="flex items-center gap-3">
-                        <img
-                          [src]="nat.flag"
-                          alt=""
-                          class="w-5 h-4 rounded-sm object-cover"
-                        />
-                        <span>{{ nat.name }}</span>
-                      </div>
-                    </hlm-option>
-                  }
-                </hlm-select-content>
+                  <hlm-select-content class="max-h-64 overflow-y-auto">
+                    @for (nat of nationalites(); track nat.name) {
+                      <hlm-option [value]="nat.name">
+                        <div class="flex items-center gap-3">
+                          <img
+                            [src]="nat.flag"
+                            [alt]="nat.name"
+                            class="w-5 h-4 rounded-sm object-cover"
+                          />
+                          <span>{{ nat.name }}</span>
+                        </div>
+                      </hlm-option>
+                    }
+                  </hlm-select-content>
+                </brn-select>
 
+                @if (registerForm.get('nationalite')?.invalid && registerForm.get('nationalite')?.touched) {
+                  <p class="text-xs text-red-600 mt-1">Veuillez sélectionner votre nationalité.</p>
+                }
+              </div>
 
-              </brn-select>
-              <div class="flex py-4  gap-3">
-                <button type="button" (click)="goToStep(StepEnum.Username)" hlmBtn variant="outline"
+              <div class="flex py-4 gap-3">
+                <button type="button" (click)="goToStep(StepEnum.Sexe)" hlmBtn variant="outline"
                         class="flex-1 py-6 border-emerald-600 text-emerald-600">
                   Retour
                 </button>
 
-                <button type="button" (click)="goToStep(StepEnum.Password)" hlmBtn
-                        class="flex-[2] bg-emerald-600 hover:bg-emerald-700 py-6">
+                <button
+                  type="button"
+                  (click)="goToStep(StepEnum.Password)"
+                  hlmBtn
+                  [disabled]="registerForm.get('nationalite')?.invalid"
+                  class="flex-[2] bg-emerald-600 hover:bg-emerald-700 py-6 disabled:opacity-50">
                   Suivant
                 </button>
               </div>
@@ -217,21 +286,42 @@
           </div>
         }
 
+        <!-- Étape 5 : Mot de passe -->
         @if (steps() === 'password') {
-
           <div class="space-y-4 animate-in fade-in slide-in-from-right-4 duration-300">
             <div class="space-y-2">
               <label hlmLabel for="pass">Mot de passe</label>
-              <input hlmInput formControlName="password" type="password" id="pass" placeholder="••••••••"
-                     class="w-full py-6">
+              <input
+                hlmInput
+                formControlName="password"
+                type="password"
+                id="pass"
+                placeholder="••••••••"
+                class="w-full py-6"
+                [class.border-red-500]="registerForm.get('password')?.invalid && registerForm.get('password')?.touched">
+
+              <p class="text-xs text-gray-500">Minimum 8 caractères requis.</p>
+
+              @if (registerForm.get('password')?.invalid && registerForm.get('password')?.touched) {
+                <p class="text-xs text-red-600 mt-1">Le mot de passe doit contenir au moins 8 caractères.</p>
+              }
             </div>
 
             <div class="flex gap-3">
               <button type="button" (click)="goToStep(StepEnum.Nationalite)" hlmBtn variant="outline"
                       class="flex-1 py-6 border-emerald-600 text-emerald-600">Retour
               </button>
-              <button type="submit" hlmBtn
-                      class="flex-2 bg-emerald-600 hover:bg-emerald-700 py-6">Créer mon compte
+              <button
+                type="submit"
+                hlmBtn
+                [disabled]="isLoading() || registerForm.invalid"
+                class="flex-2 bg-emerald-600 hover:bg-emerald-700 py-6 disabled:opacity-50 flex items-center justify-center gap-2">
+                @if (isLoading()) {
+                  <lucide-icon name="loader-2" size="20" class="animate-spin"></lucide-icon>
+                  <span>Création...</span>
+                } @else {
+                  <span>Créer mon compte</span>
+                }
               </button>
             </div>
           </div>
@@ -241,8 +331,105 @@
           Vous avez déjà un compte ?
           <a routerLink="/login" class="text-emerald-600 hover:underline font-bold">Se connecter</a>
         </p>
+      </form>
 
+      <!-- FORMULAIRE D'ACTIVATION (client existant) -->
+      <form
+        *ngIf="steps() === StepEnum.activation"
+        [formGroup]="activationForm"
+        (ngSubmit)="onSubmitActivation()"
+        class="space-y-6">
+
+        @if (steps() === 'activation') {
+          <div class="space-y-6 animate-in fade-in slide-in-from-right-4 duration-300">
+
+            <!-- Info box -->
+            <div class="bg-blue-50 p-4 rounded-xl border border-blue-100 mb-6">
+              <p class="text-sm text-blue-800 leading-relaxed">
+                <span class="font-bold">Activation : </span> Veuillez saisir l'email lié à votre compte bancaire et
+                votre
+                identifiant unique (fourni lors de votre souscription en agence).
+              </p>
+            </div>
+
+            <!-- Message d'erreur global -->
+            @if (errorMessage()) {
+              <div class="bg-red-50 border border-red-200 text-red-800 p-4 rounded-xl flex items-start gap-3">
+                <lucide-icon name="alert-circle" size="20" class="text-red-600 mt-0.5"></lucide-icon>
+                <p class="text-sm">{{ errorMessage() }}</p>
+              </div>
+            }
+
+            <div class="space-y-5">
+              <!-- Email -->
+              <div class="space-y-2">
+                <label hlmLabel for="email_activation" class="text-sm font-bold text-gray-700">Adresse Email</label>
+                <input
+                  hlmInput
+                  type="email"
+                  id="email_activation"
+                  formControlName="email"
+                  placeholder="joan.doe@exemple.com"
+                  class="w-full py-6 bg-gray-50/30"
+                  [class.border-red-500]="activationForm.get('email')?.invalid && activationForm.get('email')?.touched">
+
+                @if (activationForm.get('email')?.invalid && activationForm.get('email')?.touched) {
+                  <p class="text-xs text-red-600">Veuillez saisir une adresse email valide.</p>
+                }
+              </div>
+
+              <!-- Identifiant -->
+              <div class="space-y-2">
+                <label hlmLabel for="identifiant" class="text-sm font-bold text-gray-700">
+                  Identifiant Unique Client
+                </label>
+                <input
+                  hlmInput
+                  type="text"
+                  id="identifiant"
+                  formControlName="identifiant"
+                  placeholder="CT-000000"
+                  class="w-full py-6 bg-gray-50/30 font-mono tracking-widest uppercase"
+                  [class.border-red-505]="activationForm.get('identifiant')?.invalid && activationForm.get('identifiant')?.touched">
+
+                <p class="text-[11px] text-gray-400">Exemple : CT-123456. Disponible sur vos relevés de compte.</p>
+
+                @if (activationForm.get('identifiant')?.invalid && activationForm.get('identifiant')?.touched) {
+                  <p class="text-xs text-red-600">L'identifiant doit être au format CT-XXXXXX.</p>
+                }
+              </div>
+            </div>
+
+            <!-- Boutons -->
+            <div class="flex gap-3 pt-4">
+              <button
+                type="button"
+                (click)="goToStep(StepEnum.initiale)"
+                hlmBtn
+                variant="outline"
+                [disabled]="isLoading()"
+                class="flex-1 py-6">
+                Retour
+              </button>
+
+              <button
+                type="submit"
+                hlmBtn
+                [disabled]="isLoading() || activationForm.invalid"
+                class="flex-[2] bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-6 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2">
+
+                @if (isLoading()) {
+                  <lucide-icon name="loader-2" size="20" class="animate-spin"></lucide-icon>
+                  <span>Vérification...</span>
+                } @else {
+                  <span>Vérifier mon identité</span>
+                }
+              </button>
+            </div>
+          </div>
+        }
       </form>
     </div>
   </div>
+  <hlm-toaster/>
 </div>

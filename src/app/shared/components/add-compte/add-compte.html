@@ -1,49 +1,115 @@
-<div [formGroup]="form" class="p-6  bg-white rounded-xl">
+<div [formGroup]="form" class="p-6 bg-white rounded-xl">
   <header class="mb-6">
     <h2 hlmDialogTitle class="text-xl font-bold text-slate-900">Ajouter un nouveau compte</h2>
-    <p hlmDialogDescription class="text-sm text-slate-500">Saisissez les informations de votre nouveau compte .</p>
+    <p hlmDialogDescription class="text-sm text-slate-500">Saisissez les informations de votre nouveau compte.</p>
   </header>
 
-  <div class="space-y-5">
-
-    <div class="grid gap-2">
-      <label hlmLabel>Nom du compte</label>
-      <input hlmInput placeholder="Ex: Épargne Vacances" class="w-full"/>
+  <!-- Messages d'erreur et de succès -->
+  <div class="mb-4" *ngIf="errorMessage || successMessage">
+    <div *ngIf="errorMessage" class="p-3 bg-red-50 border border-red-200 rounded-lg flex items-start gap-2">
+      <svg class="w-5 h-5 text-red-600 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+      </svg>
+      <span class="text-sm text-red-700">{{ errorMessage }}</span>
     </div>
 
-
-    <div class="grid gap-2">
-      <label hlmLabel>Type de compte</label>
-
-      <brn-select formControlName="typeCompte" placeholder="Choisir un type">
-        <hlm-select-trigger class="w-full">
-          <hlm-select-value/>
-        </hlm-select-trigger>
-        <hlm-select-content>
-          <hlm-option value="courant">Courant</hlm-option>
-          <hlm-option value="epargne">Épargne</hlm-option>
-          <hlm-option value="business">Business</hlm-option>
-        </hlm-select-content>
-      </brn-select>
-    </div>
-
-
-    <div class="grid gap-2">
-      <div class="flex gap-1.5 flex-row">
-        <label hlmLabel>Solde initial </label><span class="text-sm">(un solde initial est requis pour la creation de compte)</span>
-      </div>
-
-      <input type="number" hlmInput formControlName="solde" placeholder="0.00 FCFA" class="w-full">
+    <div *ngIf="successMessage" class="p-3 bg-emerald-50 border border-emerald-200 rounded-lg flex items-start gap-2">
+      <svg class="w-5 h-5 text-emerald-600 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+      </svg>
+      <span class="text-sm text-emerald-700">{{ successMessage }}</span>
     </div>
   </div>
 
+  <div class="space-y-5">
+    <!-- Nom du compte -->
+    <div class="grid gap-2">
+      <label hlmLabel>Nom du compte</label>
+      <input
+        hlmInput
+        formControlName="nom"
+        placeholder="Ex: Épargne Vacances"
+        class="w-full"
+        [class.border-red-500]="form.get('nom')?.invalid && form.get('nom')?.touched"
+      />
+      <span
+        *ngIf="form.get('nom')?.invalid && form.get('nom')?.touched"
+        class="text-xs text-red-600"
+      >
+        Le nom du compte est requis (min. 3 caractères)
+      </span>
+    </div>
+
+    <!-- Type de compte -->
+    <div class="grid gap-2">
+      <label hlmLabel>Type de compte</label>
+      <brn-select formControlName="typeCompte" placeholder="Choisir un type">
+        <hlm-select-trigger class="w-full" [class.border-red-500]="form.get('typeCompte')?.invalid && form.get('typeCompte')?.touched">
+          <hlm-select-value/>
+        </hlm-select-trigger>
+        <hlm-select-content>
+          <hlm-option value="COURANT">Courant</hlm-option>
+          <hlm-option value="EPARGNE">Épargne</hlm-option>
+          <hlm-option value="PROFESSIONNEL">Business</hlm-option>
+        </hlm-select-content>
+      </brn-select>
+      <span
+        *ngIf="form.get('typeCompte')?.invalid && form.get('typeCompte')?.touched"
+        class="text-xs text-red-600"
+      >
+        Le type de compte est requis
+      </span>
+    </div>
+
+    <!-- Solde initial -->
+    <div class="grid gap-2">
+      <div class="flex gap-1.5 flex-row">
+        <label hlmLabel>Solde initial</label>
+        <span class="text-sm text-slate-500">(un solde initial est requis pour la création de compte)</span>
+      </div>
+      <input
+        type="number"
+        hlmInput
+        formControlName="solde"
+        placeholder="0.00 FCFA"
+        class="w-full"
+        [class.border-red-500]="form.get('solde')?.invalid && form.get('solde')?.touched"
+      />
+      <span
+        *ngIf="form.get('solde')?.invalid && form.get('solde')?.touched"
+        class="text-xs text-red-600"
+      >
+        Le solde doit être positif ou égal à 0
+      </span>
+    </div>
+  </div>
+
+  <!-- Footer avec boutons -->
   <div class="flex justify-end gap-3 mt-8 pt-4 border-t border-slate-50">
-    <button hlmBtn variant="ghost" (click)="close()">Annuler</button>
-    <button hlmBtn
-            class="bg-emerald-600 hover:bg-emerald-700 text-white"
-            [disabled]="form.invalid"
-            (click)="save()">
-      Créer le compte
+    <button
+      hlmBtn
+      variant="ghost"
+      (click)="close()"
+      [disabled]="isLoading"
+    >
+      Annuler
+    </button>
+    <button
+      hlmBtn
+      class="bg-emerald-600 hover:bg-emerald-700 text-white min-w-[140px]"
+      [disabled]="form.invalid || isLoading"
+      (click)="save()"
+    >
+      <span *ngIf="!isLoading" class="flex items-center gap-2">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+        </svg>
+        Créer le compte
+      </span>
+      <span *ngIf="isLoading" class="flex items-center gap-2">
+        <hlm-spinner class="w-4 h-4"/>
+        Création...
+      </span>
     </button>
   </div>
 </div>

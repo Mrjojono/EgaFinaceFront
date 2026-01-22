@@ -1,0 +1,106 @@
+<div [formGroup]="form" class="p-6 bg-white rounded-xl flex flex-col max-h-[80vh] w-full">
+  <header class="mb-4 flex-shrink-0">
+    <h2 hlmDialogTitle class="text-xl font-bold text-slate-900">Ajouter un nouveau client</h2>
+    <p hlmDialogDescription class="text-sm text-slate-500">Saisissez les informations du client. Un mot de passe temporaire sera généré si aucun mot de passe n'est fourni.</p>
+  </header>
+
+  <!-- Contenu déroulable -->
+  <div class="overflow-y-auto space-y-5 pr-2">
+    <!-- Messages d'erreur et de succès -->
+    <div class="mb-4" *ngIf="errorMessage || successMessage">
+      <div *ngIf="errorMessage" class="p-3 bg-red-50 border border-red-200 rounded-lg flex items-start gap-2">
+        <svg class="w-5 h-5 text-red-600 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+        </svg>
+        <span class="text-sm text-red-700">{{ errorMessage }}</span>
+      </div>
+
+      <div *ngIf="successMessage" class="p-3 bg-emerald-50 border border-emerald-200 rounded-lg flex items-start gap-2">
+        <svg class="w-5 h-5 text-emerald-600 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+        </svg>
+        <span class="text-sm text-emerald-700">{{ successMessage }}</span>
+      </div>
+    </div>
+
+    <div class="space-y-5">
+      <div class="grid gap-2">
+        <label hlmLabel>Nom</label>
+        <input hlmInput formControlName="nom" placeholder="Ex: Doe" class="w-full" [class.border-red-500]="form.get('nom')?.invalid && form.get('nom')?.touched" />
+        <span *ngIf="form.get('nom')?.invalid && form.get('nom')?.touched" class="text-xs text-red-600">Le nom est requis (min. 2 caractères)</span>
+      </div>
+
+      <div class="grid gap-2">
+        <label hlmLabel>Prénom</label>
+        <input hlmInput formControlName="prenom" placeholder="Ex: John" class="w-full" [class.border-red-500]="form.get('prenom')?.invalid && form.get('prenom')?.touched" />
+        <span *ngIf="form.get('prenom')?.invalid && form.get('prenom')?.touched" class="text-xs text-red-600">Le prénom est requis (min. 2 caractères)</span>
+      </div>
+
+      <div class="grid gap-2">
+        <label hlmLabel>Email</label>
+        <input hlmInput formControlName="email" placeholder="email@exemple.com" class="w-full" [class.border-red-500]="form.get('email')?.invalid && form.get('email')?.touched" />
+        <span *ngIf="form.get('email')?.invalid && form.get('email')?.touched" class="text-xs text-red-600">Un email valide est requis</span>
+      </div>
+
+      <div class="grid gap-2">
+        <label hlmLabel>Nationalité</label>
+        <input hlmInput formControlName="nationalite" placeholder="Ex: Burkina Faso" class="w-full" [class.border-red-500]="form.get('nationalite')?.invalid && form.get('nationalite')?.touched" />
+        <span *ngIf="form.get('nationalite')?.invalid && form.get('nationalite')?.touched" class="text-xs text-red-600">La nationalité est requise</span>
+      </div>
+
+      <div class="grid gap-2">
+        <label hlmLabel>Téléphone (optionnel)</label>
+        <input hlmInput formControlName="telephone" placeholder="+226 70 XX XX XX" class="w-full" />
+      </div>
+
+      <div class="grid gap-2">
+        <label hlmLabel>Adresse (optionnel)</label>
+        <input hlmInput formControlName="adresse" placeholder="Ville, Rue, ..." class="w-full" />
+      </div>
+
+      <div class="grid gap-2">
+        <label hlmLabel>Date de naissance (optionnel)</label>
+        <input hlmInput type="date" formControlName="dateNaissance" class="w-full" />
+      </div>
+
+      <div class="grid gap-2">
+        <label hlmLabel>Sexe (optionnel)</label>
+        <brn-select formControlName="sexe" placeholder="Choisir un sexe">
+          <hlm-select-trigger class="w-full">
+            <hlm-select-value/>
+          </hlm-select-trigger>
+          <hlm-select-content>
+            <hlm-option value="HOMME">Homme</hlm-option>
+            <hlm-option value="FEMME">Femme</hlm-option>
+            <hlm-option value="AUTRE">Autre</hlm-option>
+          </hlm-select-content>
+        </brn-select>
+      </div>
+
+      <div class="grid gap-2">
+        <label hlmLabel>Mot de passe (optionnel)</label>
+        <input hlmInput formControlName="password" placeholder="Laisser vide pour générer un mot de passe temporaire" class="w-full" />
+        <p class="text-xs text-slate-500">Si vous laissez vide, un mot de passe temporaire sera généré automatiquement. Communiquez-le ensuite au client via canal sécurisé.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer fixe (toujours visible) -->
+  <div class="mt-4 pt-4 border-t flex-shrink-0 bg-white">
+    <div class="flex justify-end gap-3">
+      <button hlmBtn variant="ghost" (click)="close()" [disabled]="isLoading">Annuler</button>
+      <button hlmBtn class="bg-emerald-600 hover:bg-emerald-700 text-white min-w-[140px]" [disabled]="form.invalid || isLoading" (click)="save()">
+        <span *ngIf="!isLoading" class="flex items-center gap-2">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+          </svg>
+          Créer le client
+        </span>
+        <span *ngIf="isLoading" class="flex items-center gap-2">
+          <hlm-spinner class="w-4 h-4"/>
+          Création...
+        </span>
+      </button>
+    </div>
+  </div>
+</div>

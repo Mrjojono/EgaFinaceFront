@@ -14,3 +14,13 @@ export type Account = {
   devise: string;
 };
 
+
+export type Compte = {
+  id: string;
+  typeCompte: string;
+  solde: number;
+  proprietaire: {
+    id: string;
+
+  };
+};

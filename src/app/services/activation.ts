@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {Apollo, gql} from 'apollo-angular';
 import {map} from 'rxjs/operators';
-import {INITIATE_ACTIVATION_MUTATION,COMPLETE_ACTIVATION_MUTATION} from '../graphql/mutations';
+import {INITIATE_ACTIVATION_MUTATION, COMPLETE_ACTIVATION_MUTATION} from '../graphql/mutations';
 import {User, ActivationResponse} from '../types/user.type';
 
 @Injectable({
@@ -10,7 +10,6 @@ import {User, ActivationResponse} from '../types/user.type';
 export class Activation {
   constructor(private apollo: Apollo) {
   }
-
 
   initiateActivation(identifiant: string, email: string) {
     return this.apollo.mutate<{ initiateActivation: ActivationResponse }>({

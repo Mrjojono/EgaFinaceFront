@@ -43,7 +43,7 @@ export class Auth {
       this.authService.login(email, password).subscribe({
         next: (res) => {
           console.log("Connexion reussi");
-          this.router.navigate(['/dashboard']).then(r => (""));
+          this.router.navigate(['/dashboard/home']).then(r => (""));
         },
 
         error: (error) => {

@@ -1,0 +1,48 @@
+<div class="p-4">
+  <div class="mb-4 flex items-center justify-between">
+    <div>
+      <h2 class="text-lg font-bold">Graphiques</h2>
+      <p class="text-sm text-gray-500">Sélectionnez un compte pour voir ses graphiques</p>
+    </div>
+  </div>
+
+  <div class="mb-4">
+    <label class="text-xs font-bold uppercase text-gray-500">Compte</label>
+    <select class="block mt-1 rounded bg-white border border-gray-200 px-3 py-2"
+            (change)="selectAccount($any($event.target).value)"
+            [value]="selectedAccountId()">
+      <option *ngFor="let acc of accounts" [value]="acc.id">
+        {{ acc.type }} — {{ acc.solde | number }} {{ acc.devise }}
+      </option>
+    </select>
+  </div>
+
+  <div class="grid grid-cols-2 gap-3">
+    <section class="h-[320px]">
+      <app-balance-chart
+        class="h-full block"
+        title="Évolution du solde"
+        [subtitle]="selectedAccount()?.type || '—'"
+        [data]="chartDataValue()">
+      </app-balance-chart>
+    </section>
+
+    <section class="h-[320px]">
+      <app-transaction-type-donut
+        class="h-full block"
+        title="Répartition Revenus / Dépenses"
+        [data]="computeDonutDataForSelectedAccount()">
+      </app-transaction-type-donut>
+    </section>
+
+    <section class="col-span-2 h-[420px]">
+      <app-income-vs-expense-stacked-bar
+        class="h-full block"
+        title="Revenus vs Dépenses (par mois)"
+        [categories]="computeMonthlyCategoriesForSelectedAccount().categories"
+        [income]="computeMonthlyCategoriesForSelectedAccount().income"
+        [expenses]="computeMonthlyCategoriesForSelectedAccount().expenses">
+      </app-income-vs-expense-stacked-bar>
+    </section>
+  </div>
+</div>

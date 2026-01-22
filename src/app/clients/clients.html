@@ -1,1 +1,128 @@
-  <p>clients works!</p>
+<div>
+  <header class="flex flex-row justify-between items-center mb-6">
+    <div>
+      <h1 class="text-3xl font-bold tracking-tight">Clients</h1>
+      <p class="text-muted-foreground">Liste des clients de la banque</p>
+    </div>
+
+    <div class="flex flex-row gap-3">
+      <button hlmBtn variant="outline" class="flex rounded-lg items-center gap-2">
+        <lucide-icon name="download" size="18"></lucide-icon>
+        Export
+      </button>
+
+      <button (click)="openCreateClient()" hlmBtn
+              class="bg-emerald-600 hover:bg-emerald-700 rounded-lg text-white flex items-center gap-2">
+        <lucide-icon name="plus" size="18"></lucide-icon>
+        Nouveau Client
+      </button>
+    </div>
+  </header>
+
+  <section class="mt-6  bg-white rounded-lg" hlmCard>
+    <div class=" flex flex-row  flex-wrap items-end justify-between gap-2" hlmCardContent>
+      <div class="flex items-end flex-row gap-6 flex-1">
+        <div class="flex flex-col gap-2 max-w-72">
+          <label hlmLabel class="text-xs font-bold uppercase text-gray-500 tracking-wider">Recherche</label>
+          <input hlmInput type="text" placeholder="Recherche (nom, prénom, email)" class="px-3 py-2 rounded"
+                 (input)="setSearchTerm($any($event.target).value)"/>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-2">
+        <button hlmBtn class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 rounded transition-all active:scale-95"
+                (click)="loadClients(1)">
+          <lucide-icon name="search" size="16"></lucide-icon>
+          Recharger
+        </button>
+
+        <button hlmBtn variant="outline" class="px-3" (click)="page.set(1); loadClients(1)">
+          Réinitialiser
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <section class="mt-6">
+    <div hlmTableContainer class="border rounded p-4 bg-white overflow-hidden  min-h-100 flex flex-col">
+
+      <div class="flex-1 overflow-auto">
+        <table hlmTable class=" rounded-lg w-full">
+          <thead hlmTHead>
+          <tr hlmTr>
+            <th hlmTh class="w-20 cursor-pointer" (click)="sort('id')">
+              ID
+              <span *ngIf="sortColumn() === 'id'"> {{ sortDirection() === 'asc' ? '▲' : '▼' }} </span>
+            </th>
+            <th hlmTh class="cursor-pointer" (click)="sort('nom')">
+              Nom
+              <span *ngIf="sortColumn() === 'nom'"> {{ sortDirection() === 'asc' ? '▲' : '▼' }} </span>
+            </th>
+            <th hlmTh class="cursor-pointer" (click)="sort('prenom')">
+              Prénom
+              <span *ngIf="sortColumn() === 'prenom'"> {{ sortDirection() === 'asc' ? '▲' : '▼' }} </span>
+            </th>
+            <th hlmTh>Email</th>
+            <th hlmTh>Téléphone</th>
+            <th hlmTh>Nationalité</th>
+            <th hlmTh>Identifiant</th>
+            <th hlmTh class="text-right">Actions</th>
+          </tr>
+          </thead>
+
+          <tbody hlmTBody>
+          <tr *ngIf="isLoading()" class="h-16">
+            <td hlmTd colspan="8" class="text-center text-sm text-gray-500">Chargement des clients...</td>
+          </tr>
+
+          <tr *ngFor="let client of filteredClients(); trackBy: trackById" hlmTr class="hover:bg-gray-50/50 transition-colors h-16">
+            <td hlmTd class="font-mono text-xs text-gray-500">{{ client.id }}</td>
+            <td hlmTd class="font-medium">{{ client.nom }}</td>
+            <td hlmTd>{{ client.prenom }}</td>
+            <td hlmTd>{{ client.email }}</td>
+            <td hlmTd>{{ client.telephone }}</td>
+            <td hlmTd>{{ client.nationalite }}</td>
+            <td hlmTd class="font-mono text-xs">{{ client.identifiant }}</td>
+            <td hlmTd class="text-right">
+              <div class="flex items-center justify-end gap-2">
+                <button hlmBtn variant="ghost" (click)="openEditClient(client)">
+                  <lucide-icon name="edit-2" size="14"></lucide-icon>
+                  <span class="sr-only">Éditer</span>
+                </button>
+                <button hlmBtn variant="destructive" (click)="confirmAndDelete(client)">
+                  <lucide-icon name="trash-2" size="14"></lucide-icon>
+                  <span class="sr-only">Supprimer</span>
+                </button>
+              </div>
+            </td>
+          </tr>
+
+          <tr *ngIf="!isLoading() && clients().length === 0">
+            <td hlmTd colspan="8" class="text-center text-sm text-gray-500">Aucun client trouvé.</td>
+          </tr>
+
+          </tbody>
+        </table>
+      </div>
+
+      <div class="flex items-center justify-between px-6 py-4 bg-gray-50 border-t mt-auto">
+        <div class="text-sm text-gray-500">
+          Page <span class="font-bold text-gray-900">{{ page() }}</span>
+        </div>
+
+        <div class="flex gap-2">
+          <button hlmBtn variant="outline" size="sm" (click)="prevPage()" [disabled]="page() === 1">
+            <lucide-icon name="chevron-left" size="16" class="mr-2"></lucide-icon>
+            Précédent
+          </button>
+          <button hlmBtn variant="outline" size="sm" (click)="nextPage()">
+            Suivant
+            <lucide-icon name="chevron-right" size="16" class="ml-2"></lucide-icon>
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div *ngIf="errorMessage()" class="mt-4 text-sm text-red-600">{{ errorMessage() }}</div>
+</div>

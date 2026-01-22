@@ -11,31 +11,49 @@
 
     <hlm-sidebar-content class="p-3">
       <nav class="space-y-1">
+
         @for (navItem of NavItems; track navItem.title) {
-          <a [routerLink]="navItem.url"
-             routerLinkActive
-             #rla="routerLinkActive"
-             [class]="rla.isActive ? 'bg-emerald-600 text-white shadow-sm' : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'"
-             class="group relative flex items-center gap-3 p-2.5 rounded-lg transition-all duration-200">
+          @if (hasAccess(navItem.roles)) {
+            <a
+              [routerLink]="navItem.url"
+              routerLinkActive
+              #rla="routerLinkActive"
+              [class]="
+            rla.isActive
+              ? 'bg-emerald-600 text-white shadow-sm'
+              : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
+          "
+              class="group relative flex items-center gap-3 p-2.5 rounded-lg transition-all duration-200"
+            >
 
-            <lucide-icon
-              [name]="navItem.icon"
-              [class]="rla.isActive ? 'text-white' : 'text-slate-400 group-hover:text-slate-600'"
-              class="w-5 h-5 shrink-0">
-            </lucide-icon>
+              <lucide-icon
+                [name]="navItem.icon"
+                [class]="
+              rla.isActive
+                ? 'text-white'
+                : 'text-slate-400 group-hover:text-slate-600'
+            "
+                class="w-5 h-5 shrink-0">
+              </lucide-icon>
 
-            <span class="text-sm font-medium truncate group-data-[state=collapsed]:hidden">
-              {{ navItem.title }}
-            </span>
-          </a>
+              <span class="text-sm font-medium truncate group-data-[state=collapsed]:hidden">
+            {{ navItem.title }}
+          </span>
+
+            </a>
+
+          }
         }
+
       </nav>
     </hlm-sidebar-content>
 
+
     <hlm-sidebar-footer class="p-3 border-t border-slate-100">
-      <button hlmBtn variant="ghost" class="w-full justify-start gap-3 px-3 text-slate-500 hover:text-red-600 hover:bg-red-50 transition-colors">
+      <button hlmBtn variant="ghost"
+              class="w-full justify-start gap-3 px-3 text-slate-500 hover:text-red-600 hover:bg-red-50 transition-colors">
         <lucide-icon name="log-out" class="w-5 h-5 shrink-0"></lucide-icon>
-        <span class="group-data-[state=collapsed]:hidden font-medium text-sm">Déconnexion</span>
+        <span (click)="logout()" class="group-data-[state=collapsed]:hidden font-medium text-sm">Déconnexion</span>
       </button>
     </hlm-sidebar-footer>
   </hlm-sidebar>
@@ -48,20 +66,15 @@
       </button>
 
       <div class="flex items-center gap-6">
-        <div class="relative hidden md:block w-72">
-          <lucide-icon name="search" class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400"></lucide-icon>
-          <input hlmInput type="text" placeholder="Rechercher..."
-                 class="w-full pl-10 bg-slate-50 border-transparent focus:bg-white focus:ring-emerald-500 rounded-full h-9 text-sm"/>
-        </div>
 
         <div class="flex items-center gap-3 pl-4 border-l border-slate-100">
           <div class="text-right hidden sm:block">
-            <p class="text-sm font-semibold text-slate-900 leading-none">{{user?.prenom}} {{user?.nom}}</p>
+            <p class="text-sm font-semibold text-slate-900 leading-none">{{ user()?.prenom }} {{ user()?.nom }}</p>
             <p class="text-xs text-slate-500 mt-1 italic">Utilisateur</p>
           </div>
           <hlm-avatar class="h-9 w-9 border-2 border-emerald-100">
             <span hlmAvatarFallback class="bg-emerald-600 text-white text-xs">
-              {{ user?.prenom?.charAt(0) }}{{ user?.nom?.charAt(0) }}
+              {{ user()?.prenom?.charAt(0) }}{{ user()?.nom?.charAt(0) }}
             </span>
           </hlm-avatar>
         </div>

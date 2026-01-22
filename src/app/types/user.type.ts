@@ -6,6 +6,12 @@ export enum Role {
   ADMIN = 'ADMIN'
 }
 
+export enum Sexe {
+  HOMME = 'HOMME',
+  FEMME = 'FEMME',
+  AUTRE = 'AUTRE',
+}
+
 export interface User {
   id: string;
   nom: string;
@@ -13,11 +19,26 @@ export interface User {
   email: string;
   telephone?: string;
   role: Role;
+  adresse?: string;
+  sexe?: string;
+  nationality?: string;
+  password?: string;
 }
-
 
 
 export interface AuthResponse {
   token: string;
   user: User;
 }
+
+export interface ActivationResponse {
+  success: boolean;
+  message: string;
+}
+
+
+ export  type Nationality = {
+  code?: string;
+  name: string;
+  flag: string;
+};

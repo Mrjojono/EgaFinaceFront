@@ -1,104 +1,417 @@
-<div [formGroup]="form" class="p-6 bg-slate-50 min-h-screen">
-  <h1 class="text-2xl font-bold text-slate-800 mb-6">Paramètres</h1>
+<div [formGroup]="form" class="min-h-screen bg-slate-50 p-0">
+  <div class="w-full h-full">
 
-  <hlm-tabs tab="perso" class="w-full">
-    <hlm-tabs-list class="grid w-full max-w-xl grid-cols-3 bg-slate-200/50 p-1 rounded-lg mb-8" aria-label="tabs">
-      <button hlmTabsTrigger="perso"
-              class="text-xs font-bold py-2 data-[state=active]:bg-emerald-600 data-[state=active]:text-white transition-all">
-        Personnel
-      </button>
-      <button hlmTabsTrigger="securite"
-              class="text-xs font-bold py-2 data-[state=active]:bg-emerald-600 data-[state=active]:text-white transition-all">
-        Sécurité
-      </button>
-      <button hlmTabsTrigger="pref"
-              class="text-xs font-bold py-2 data-[state=active]:bg-emerald-600 data-[state=active]:text-white transition-all">
-        Préférences
-      </button>
-    </hlm-tabs-list>
+    <div class="max-w-7xl mx-auto p-6">
+      <hlm-tabs tab="perso" class="w-full">
+        <!-- Tabs Navigation -->
+        <hlm-tabs-list class="inline-flex bg-white rounded-lg border border-slate-200 p-1 mb-6" aria-label="tabs">
+          <button hlmTabsTrigger="perso"
+                  class="flex items-center gap-2 px-6 py-2.5 text-sm font-bold rounded-lg transition-all data-[state=active]:bg-emerald-600 data-[state=active]:text-white text-slate-700">
+            <lucide-icon name="user" class="w-4 h-4"></lucide-icon>
+            Personnel
+          </button>
+          <button hlmTabsTrigger="securite"
+                  class="flex items-center gap-2 px-6 py-2.5 text-sm font-bold rounded-lg transition-all data-[state=active]:bg-emerald-600 data-[state=active]:text-white text-slate-700">
+            <lucide-icon name="shield" class="w-4 h-4"></lucide-icon>
+            Sécurité
+          </button>
+          <button hlmTabsTrigger="pref"
+                  class="flex items-center gap-2 px-6 py-2.5 text-sm font-bold rounded-lg transition-all data-[state=active]:bg-emerald-600 data-[state=active]:text-white text-slate-700">
+            <lucide-icon name="bell" class="w-4 h-4"></lucide-icon>
+            Préférences
+          </button>
+          <button hlmTabsTrigger="danger"
+                  class="flex items-center gap-2 px-6 py-2.5 text-sm font-bold rounded-lg transition-all data-[state=active]:bg-red-600 data-[state=active]:text-white text-slate-700">
+            <lucide-icon name="alert-triangle" class="w-4 h-4"></lucide-icon>
+            Zone Danger
+          </button>
+        </hlm-tabs-list>
 
-
-    <div hlmTabsContent="perso" class="space-y-6">
-      <div class="bg-white p-8 rounded-2xl shadow-sm border border-slate-100 max-w-2xl">
-        <h2 class="text-lg font-bold text-slate-900 mb-6">Informations Personnelles</h2>
-
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div class="space-y-1.5">
-            <label class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Prénom & Nom</label>
-            <input hlmInput class="w-full" placeholder="Ex: Joan" formControlName="name">
-          </div>
-          <div class="space-y-1.5">
-            <label class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Email</label>
-            <input hlmInput class="w-full" type="email" placeholder="email@exemple.com" formControlName="email">
-          </div>
-          <div class="space-y-1.5">
-            <label class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Téléphone</label>
-            <input hlmInput class="w-full" placeholder="+112 56787990" formControlName="phone">
-          </div>
-          <div class="space-y-1.5">
-            <label class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Adresse</label>
-            <input hlmInput class="w-full" placeholder="Votre adresse" formControlName="address">
-          </div>
-        </div>
-
-        <button hlmBtn class="mt-8 bg-emerald-600 hover:bg-emerald-700 text-white px-8">Enregistrer les modifications
-        </button>
-      </div>
-    </div>
-
-
-    <div hlmTabsContent="securite" class="space-y-6">
-      <div class="bg-white p-8 rounded-2xl shadow-sm border border-slate-100 max-w-md">
-        <h2 class="text-lg font-bold text-slate-900 mb-6">Sécurité</h2>
-
-        <div class="space-y-5">
-          <div class="space-y-1.5">
-            <label class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Mot de passe actuel</label>
-            <input hlmInput class="w-full" type="password" placeholder="••••••••">
-          </div>
-          <div class="space-y-1.5">
-            <label class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Nouveau mot de passe</label>
-            <input hlmInput class="w-full" type="password" placeholder="••••••••">
-          </div>
-
-        </div>
-
-        <button hlmBtn class="mt-8 w-full bg-emerald-600 hover:bg-emerald-700 text-white">Mettre à jour le mot de
-          passe
-        </button>
-      </div>
-    </div>
-
-
-    <div hlmTabsContent="pref" class="space-y-6">
-      <div class="bg-white p-8 rounded-2xl shadow-sm border border-slate-100 max-w-md">
-        <h2 class="text-lg font-bold text-slate-900 mb-6">Préférences</h2>
-
-        <div class="space-y-6">
-          <div class="space-y-1.5">
-            <label class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Langue de l'interface</label>
-            <select class="w-full p-2 border border-slate-200 rounded-lg text-sm font-medium focus:ring-emerald-500">
-              <option>Français</option>
-              <option>English</option>
-            </select>
-          </div>
-
-          <div class="space-y-4">
-            <div class="flex items-center justify-between">
-              <span class="text-sm font-bold text-slate-700">Notifications par email</span>
-              <input type="checkbox" class="accent-emerald-600 w-4 h-4" checked>
+        <!-- Onglet Personnel -->
+        <div hlmTabsContent="perso">
+          <div class="bg-white rounded-lg border border-slate-200">
+            <!-- Card Header -->
+            <div class="bg-gradient-to-r from-emerald-600 to-emerald-700 p-6 rounded-t-lg">
+              <div class="flex items-center gap-3 text-white">
+                <div>
+                  <h2 class="text-xl font-bold">Informations Personnelles</h2>
+                  <p class="text-emerald-100 text-sm">Mettez à jour vos informations de profil</p>
+                </div>
+              </div>
             </div>
-            <div class="flex items-center justify-between">
-              <span class="text-sm font-bold text-slate-700">Alertes de connexion</span>
-              <input type="checkbox" class="accent-emerald-600 w-4 h-4" checked>
+
+            <!-- Card Body -->
+            <div class="p-6">
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Nom -->
+                <div class="space-y-2">
+                  <label class="flex items-center gap-2 text-xs font-bold text-slate-500 uppercase tracking-wider">
+                    <lucide-icon name="user" class="w-3 h-3"></lucide-icon>
+                    Nom
+                  </label>
+                  <input hlmInput
+                         class="w-full"
+                         placeholder="Entrez votre nom"
+                         formControlName="nom">
+                </div>
+
+                <!-- Prénom -->
+                <div class="space-y-2">
+                  <label class="flex items-center gap-2 text-xs font-bold text-slate-500 uppercase tracking-wider">
+                    <lucide-icon name="user" class="w-3 h-3"></lucide-icon>
+                    Prénom
+                  </label>
+                  <input hlmInput
+                         class="w-full"
+                         placeholder="Entrez votre prénom"
+                         formControlName="prenom">
+                </div>
+
+                <!-- Email -->
+                <div class="space-y-2">
+                  <label class="flex items-center gap-2 text-xs font-bold text-slate-500 uppercase tracking-wider">
+                    <lucide-icon name="mail" class="w-3 h-3"></lucide-icon>
+                    Email
+                  </label>
+                  <input hlmInput
+                         class="w-full"
+                         type="email"
+                         placeholder="votre@email.com"
+                         formControlName="email">
+                </div>
+
+                <!-- Téléphone -->
+                <div class="space-y-2">
+                  <label class="flex items-center gap-2 text-xs font-bold text-slate-500 uppercase tracking-wider">
+                    <lucide-icon name="phone" class="w-3 h-3"></lucide-icon>
+                    Téléphone
+                  </label>
+                  <input hlmInput
+                         class="w-full"
+                         placeholder="+228 XX XX XX XX"
+                         formControlName="phone">
+                </div>
+
+                <!-- Adresse -->
+                <div class="space-y-2 md:col-span-2">
+                  <label class="flex items-center gap-2 text-xs font-bold text-slate-500 uppercase tracking-wider">
+                    <lucide-icon name="map-pin" class="w-3 h-3"></lucide-icon>
+                    Adresse
+                  </label>
+                  <input hlmInput
+                         class="w-full"
+                         placeholder="Votre adresse complète"
+                         formControlName="address">
+                </div>
+              </div>
+              <!-- Nationalité-->
+              <div class="space-y-2  mt-5 md:col-span-2">
+                <div class="w-full max-w-xl space-y-6 animate-in fade-in slide-in-from-right-4 duration-300">
+                  <div class="space-y-2">
+                    <label class="flex items-center gap-2 text-xs font-bold text-slate-500 uppercase tracking-wider">
+                      <lucide-icon name="map-pin" class="w-3 h-3"></lucide-icon>
+                    Votre Nationalité
+                    </label>
+                    <brn-select formControlName="nationalite" class="w-full" placeholder="Sélectionnez votre pays">
+                      <hlm-select-trigger class="w-full">
+                        <hlm-select-value/>
+                      </hlm-select-trigger>
+
+                      <hlm-select-content class="max-h-64 overflow-y-auto">
+                        @for (nat of nationalites(); track nat.name) {
+                          <hlm-option [value]="nat.name">
+                            <div class="flex items-center gap-3">
+                              <img
+                                [src]="nat.flag"
+                                [alt]="nat.name"
+                                class="w-5 h-4 rounded-sm object-cover"
+                              />
+                              <span>{{ nat.name }}</span>
+                            </div>
+                          </hlm-option>
+                        }
+                      </hlm-select-content>
+                    </brn-select>
+
+                    @if (form.get('nationalite')?.invalid && form.get('nationalite')?.touched) {
+                      <p class="text-xs text-red-600 mt-1">Veuillez sélectionner votre nationalité.</p>
+                    }
+                  </div>
+
+                </div>
+              </div>
+
+              <div class="flex items-center justify-between mt-6 pt-6 border-t border-slate-200">
+                <p class="text-sm text-slate-500">
+                  <lucide-icon name="info" class="w-4 h-4 inline mr-1"></lucide-icon>
+                  Vos informations sont sécurisées
+                </p>
+                <button hlmBtn class="bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-2 rounded-lg">
+                  <lucide-icon name="save" class="w-4 h-4 mr-2 inline"></lucide-icon>
+                  Enregistrer
+                </button>
+              </div>
             </div>
           </div>
         </div>
 
-        <button hlmBtn class="mt-8 w-full bg-emerald-600 hover:bg-emerald-700 text-white">Sauvegarder les préférences
-        </button>
-      </div>
-    </div>
+        <!-- Onglet Sécurité -->
+        <div hlmTabsContent="securite">
+          <div class=" bg-white rounded-lg border border-slate-200">
+            <!-- Card Header -->
+            <div class="bg-gradient-to-r from-emerald-600 to-emerald-700 p-6 rounded-t-lg">
+              <div class="flex items-center gap-3 text-white">
 
-  </hlm-tabs>
+                <div>
+                  <h2 class="text-xl font-bold">Sécurité du Compte</h2>
+                  <p class="text-emerald-100 text-sm">Protégez votre compte avec un mot de passe fort</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Card Body -->
+            <div class="p-6 space-y-6">
+              <!-- Mot de passe actuel -->
+              <div class="space-y-2">
+                <label class="flex items-center gap-2 text-xs font-bold text-slate-500 uppercase tracking-wider">
+                  <lucide-icon name="lock" class="w-3 h-3"></lucide-icon>
+                  Mot de passe actuel
+                </label>
+                <input hlmInput
+                       class="w-full"
+                       type="password"
+                       placeholder="••••••••">
+              </div>
+
+              <!-- Nouveau mot de passe -->
+              <div class="space-y-2">
+                <label class="flex items-center gap-2 text-xs font-bold text-slate-500 uppercase tracking-wider">
+                  <lucide-icon name="key" class="w-3 h-3"></lucide-icon>
+                  Nouveau mot de passe
+                </label>
+                <input hlmInput
+                       class="w-full"
+                       type="password"
+                       placeholder="••••••••">
+              </div>
+
+              <!-- Confirmer mot de passe -->
+              <div class="space-y-2">
+                <label class="flex items-center gap-2 text-xs font-bold text-slate-500 uppercase tracking-wider">
+                  <lucide-icon name="check-circle" class="w-3 h-3"></lucide-icon>
+                  Confirmer le mot de passe
+                </label>
+                <input hlmInput
+                       class="w-full"
+                       type="password"
+                       placeholder="••••••••">
+              </div>
+
+              <!-- Info Box -->
+              <div class="bg-emerald-50 border border-emerald-200 rounded-lg p-4">
+                <h3 class="font-bold text-emerald-900 text-sm mb-2 flex items-center gap-2">
+                  <lucide-icon name="info" class="w-4 h-4"></lucide-icon>
+                  Conseils de sécurité
+                </h3>
+                <ul class="text-xs text-emerald-700 space-y-1 ml-6">
+                  <li>• Utilisez au moins 8 caractères</li>
+                  <li>• Incluez des lettres majuscules et minuscules</li>
+                  <li>• Ajoutez des chiffres et des symboles</li>
+                </ul>
+              </div>
+
+              <button hlmBtn class="w-full bg-emerald-600 hover:bg-emerald-700 text-white py-2.5 rounded-lg">
+                <lucide-icon name="shield-check" class="w-4 h-4 mr-2 inline"></lucide-icon>
+                Mettre à jour le mot de passe
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Onglet Préférences -->
+        <div hlmTabsContent="pref">
+          <div class=" bg-white rounded-lg border border-slate-200">
+            <!-- Card Header -->
+            <div class="bg-gradient-to-r from-emerald-600 to-emerald-700 p-6 rounded-t-lg">
+              <div class="flex items-center gap-3 text-white">
+
+                <div>
+                  <h2 class="text-xl font-bold">Préférences</h2>
+                  <p class="text-emerald-100 text-sm">Personnalisez votre expérience</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Card Body -->
+            <div class="p-6 space-y-6">
+              <!-- Langue -->
+              <div class="space-y-3">
+                <label class="flex items-center gap-2 text-xs font-bold text-slate-500 uppercase tracking-wider">
+                  <lucide-icon name="globe" class="w-3 h-3"></lucide-icon>
+                  Langue de l'interface
+                </label>
+                <select class="w-full p-3 border border-slate-200 rounded-lg text-sm font-medium">
+                  <option>🇫🇷 Français</option>
+                  <option>🇬🇧 English</option>
+                  <option>🇪🇸 Español</option>
+                </select>
+              </div>
+
+              <!-- Notifications Section -->
+              <div class="space-y-4">
+                <h3 class="font-bold text-slate-700 flex items-center gap-2">
+                  <lucide-icon name="bell" class="w-4 h-4"></lucide-icon>
+                  Notifications
+                </h3>
+
+                <div class="space-y-3">
+                  <!-- Email Notifications -->
+                  <div class="flex items-center justify-between p-4 bg-slate-50 rounded-lg border border-slate-100">
+                    <div class="flex items-center gap-3">
+                      <div class="p-2 bg-emerald-100 rounded-lg">
+                        <lucide-icon name="mail" class="w-5 h-5 text-emerald-600"></lucide-icon>
+                      </div>
+                      <div>
+                        <p class="font-bold text-slate-800 text-sm">Notifications par email</p>
+                        <p class="text-xs text-slate-500">Recevez des mises à jour par email</p>
+                      </div>
+                    </div>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                      <input type="checkbox" class="sr-only peer" checked>
+                      <div class="w-11 h-6 bg-slate-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-600"></div>
+                    </label>
+                  </div>
+
+                  <!-- Login Alerts -->
+                  <div class="flex items-center justify-between p-4 bg-slate-50 rounded-lg border border-slate-100">
+                    <div class="flex items-center gap-3">
+                      <div class="p-2 bg-emerald-100 rounded-lg">
+                        <lucide-icon name="shield-alert" class="w-5 h-5 text-emerald-600"></lucide-icon>
+                      </div>
+                      <div>
+                        <p class="font-bold text-slate-800 text-sm">Alertes de connexion</p>
+                        <p class="text-xs text-slate-500">Soyez alerté des nouvelles connexions</p>
+                      </div>
+                    </div>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                      <input type="checkbox" class="sr-only peer" checked>
+                      <div class="w-11 h-6 bg-slate-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-600"></div>
+                    </label>
+                  </div>
+
+                  <!-- Marketing -->
+                  <div class="flex items-center justify-between p-4 bg-slate-50 rounded-lg border border-slate-100">
+                    <div class="flex items-center gap-3">
+                      <div class="p-2 bg-emerald-100 rounded-lg">
+                        <lucide-icon name="megaphone" class="w-5 h-5 text-emerald-600"></lucide-icon>
+                      </div>
+                      <div>
+                        <p class="font-bold text-slate-800 text-sm">Offres et promotions</p>
+                        <p class="text-xs text-slate-500">Recevoir les nouveautés et offres</p>
+                      </div>
+                    </div>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                      <input type="checkbox" class="sr-only peer">
+                      <div class="w-11 h-6 bg-slate-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-600"></div>
+                    </label>
+                  </div>
+                </div>
+              </div>
+
+              <button hlmBtn class="w-full bg-emerald-600 hover:bg-emerald-700 text-white py-2.5 rounded-lg">
+                <lucide-icon name="save" class="w-4 h-4 mr-2 inline"></lucide-icon>
+                Sauvegarder les préférences
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Onglet Zone Danger -->
+        <div hlmTabsContent="danger">
+          <div class=" bg-white rounded-lg border border-red-200">
+            <!-- Card Header -->
+            <div class="bg-gradient-to-r from-red-600 to-red-700 p-6 rounded-t-lg">
+              <div class="flex items-center gap-3 text-white">
+                <div class="p-2.5 bg-white/20 rounded-lg">
+                  <lucide-icon name="alert-triangle" class="w-5 h-5"></lucide-icon>
+                </div>
+                <div>
+                  <h2 class="text-xl font-bold">Zone Danger</h2>
+                  <p class="text-red-100 text-sm">Actions irréversibles - Procédez avec prudence</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Card Body -->
+            <div class="p-6 space-y-6">
+              <!-- Warning Box -->
+              <div class="bg-amber-50 border border-amber-300 rounded-lg p-4">
+                <div class="flex items-start gap-3">
+                  <lucide-icon name="alert-circle" class="w-5 h-5 text-amber-600 mt-0.5"></lucide-icon>
+                  <div>
+                    <h3 class="font-bold text-amber-900 mb-1">Attention</h3>
+                    <p class="text-sm text-amber-700">Ces actions sont permanentes et ne peuvent pas être annulées. Assurez-vous de bien comprendre les conséquences avant de continuer.</p>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Désactiver le compte -->
+              <div class="border border-slate-200 rounded-lg p-5">
+                <div class="flex items-start justify-between gap-4">
+                  <div class="flex-1">
+                    <div class="flex items-center gap-2 mb-2">
+                      <lucide-icon name="pause-circle" class="w-5 h-5 text-slate-600"></lucide-icon>
+                      <h3 class="font-bold text-slate-900">Désactiver le compte</h3>
+                    </div>
+                    <p class="text-sm text-slate-600 mb-3">Désactivez temporairement votre compte. Vous pourrez le réactiver à tout moment en vous reconnectant.</p>
+                    <ul class="text-xs text-slate-500 space-y-1 ml-5">
+                      <li>• Votre profil sera masqué</li>
+                      <li>• Vos données seront conservées</li>
+                      <li>• Réactivation possible à tout moment</li>
+                    </ul>
+                  </div>
+                  <button hlmBtn class="bg-slate-200 hover:bg-slate-300 text-slate-700 px-5 py-2 rounded-lg whitespace-nowrap">
+                    Désactiver
+                  </button>
+                </div>
+              </div>
+
+              <!-- Supprimer le compte -->
+              <div class="border border-red-300 rounded-lg p-5 bg-red-50">
+                <div class="flex items-start justify-between gap-4">
+                  <div class="flex-1">
+                    <div class="flex items-center gap-2 mb-2">
+                      <lucide-icon name="trash-2" class="w-5 h-5 text-red-600"></lucide-icon>
+                      <h3 class="font-bold text-red-900">Supprimer définitivement le compte</h3>
+                    </div>
+                    <p class="text-sm text-red-700 mb-3 font-medium">Cette action est irréversible. Toutes vos données seront définitivement supprimées de nos serveurs.</p>
+                    <ul class="text-xs text-red-600 space-y-1 ml-5">
+                      <li>• Suppression permanente de toutes vos données</li>
+                      <li>• Perte de l'accès à tous vos contenus</li>
+                      <li>• Aucune possibilité de récupération</li>
+                      <li>• Suppression sous 30 jours (période de grâce)</li>
+                    </ul>
+                  </div>
+                  <button hlmBtn class="bg-red-600 hover:bg-red-700 text-white px-5 py-2 rounded-lg whitespace-nowrap">
+                    <lucide-icon name="trash-2" class="w-4 h-4 mr-2 inline"></lucide-icon>
+                    Supprimer
+                  </button>
+                </div>
+              </div>
+
+              <!-- Info supplémentaire -->
+              <div class="bg-slate-100 rounded-lg p-4 text-center">
+                <p class="text-xs text-slate-600">
+                  <lucide-icon name="help-circle" class="w-4 h-4 inline mr-1"></lucide-icon>
+                  Besoin d'aide ?
+                  <a href="#" class="text-emerald-600 font-bold hover:underline ml-1">Contactez notre support</a>
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </hlm-tabs>
+    </div>
+  </div>
 </div>
