@@ -1,8 +1,19 @@
-<div [formGroup]="form" class="bg-white p-4 rounded-xl max-w-md mx-auto">
+<div [formGroup]="form" class="bg-white p-4 rounded-xl max-w-lg mx-auto">
 
+  <!-- Message d'erreur global -->
+  <div *ngIf="errorMessage" class="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 flex items-center gap-2">
+    <lucide-icon name="alert-circle" size="16" class="flex-shrink-0"></lucide-icon>
+    <span class="text-sm">{{ errorMessage }}</span>
+  </div>
+
+  <!-- Indicateur de chargement des comptes -->
+  <div *ngIf="isLoadingAccounts" class="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-lg text-blue-700 flex items-center gap-2">
+    <lucide-icon name="loader-2" size="16" class="animate-spin flex-shrink-0"></lucide-icon>
+    <span class="text-sm">Chargement de vos comptes...</span>
+  </div>
 
   <hlm-tabs tab="depot" class="w-full">
-    <hlm-tabs-list class="grid w-full grid-cols-3 bg-slate-100 p-1 rounded-lg" aria-label="tabs">
+    <hlm-tabs-list class="grid w-full grid-cols-3 bg-slate-100 p-1 rounded-lg mb-6" aria-label="tabs">
       <button hlmTabsTrigger="depot"
               class="text-xs font-bold py-1.5 data-[state=active]:bg-emerald-500 data-[state=active]:text-white transition-all">
         Dépôt
@@ -17,95 +28,126 @@
       </button>
     </hlm-tabs-list>
 
-
+    <!-- ========== ONGLET DÉPÔT ========== -->
     <div hlmTabsContent="depot" class="mt-6 space-y-6">
-
-      <div class="flex items-center gap-2">
-        <div class="flex-1">
-          <brn-select formControlName="CompteSource" placeholder="Choisir un compte">
-            <hlm-select-trigger
-              class="w-full h-auto p-2 border border-slate-100 rounded-lg bg-slate-50/50 flex items-center gap-2 outline-none">
-
-              <div class="flex-1 text-left min-w-0">
-                <p class="text-[9px] text-slate-400 font-bold leading-none mb-1 uppercase">DE</p>
-                <hlm-select-value class="text-xs font-bold text-slate-900 truncate"/>
-              </div>
-
-
-            </hlm-select-trigger>
-
-            <hlm-select-content class="bg-white border-slate-200">
-              <hlm-option value="chase" class="flex items-center gap-2">
-                <lucide-icon name="landmark" size="12" class="mr-2"></lucide-icon>
-                Chase Bank ...8899
-              </hlm-option>
-              <hlm-option value="momo" class="flex items-center gap-2 text-yellow-600">
-                <lucide-icon name="smartphone" size="12" class="mr-2"></lucide-icon>
-                Mobile Money
-              </hlm-option>
-              <hlm-option value="wave" class="flex items-center gap-2 text-blue-500">
-                <lucide-icon name="waves" size="12" class="mr-2"></lucide-icon>
-                Wave
-              </hlm-option>
-            </hlm-select-content>
-          </brn-select>
-        </div>
-
-        <lucide-icon name="arrow-right" class="text-slate-300" size="16"></lucide-icon>
-
-        <div class="flex-1 p-2 border border-slate-100 rounded-lg flex items-center gap-2 bg-white">
-          <lucide-icon name="search" size="14" class="text-slate-400 ml-1"></lucide-icon>
-          <input type="text"
+      <!-- Recherche de destinataire par email -->
+      <div class="space-y-3">
+        <label class="block text-xs text-slate-500 font-medium">Rechercher un destinataire par email</label>
+        <div class="p-2 border border-slate-100 rounded-lg flex items-center gap-2 bg-white">
+          <lucide-icon [name]="isSearching ? 'loader-2' : 'search'"
+                       [size]="14"
+                       [class.animate-spin]="isSearching"
+                       class="text-slate-400 ml-1"></lucide-icon>
+          <input formControlName="searchEmail" type="email"
                  class="w-full bg-transparent border-none text-xs focus:ring-0 p-0 placeholder:text-slate-300"
-                 placeholder="Numéro ou Email">
-          <lucide-icon name="chevron-down" size="14" class="text-slate-400"></lucide-icon>
+                 placeholder="Entrez l'email du destinataire..."
+                 [disabled]="isLoadingAccounts">
         </div>
-      </div>
 
+        <!-- Loader de recherche -->
+        <div *ngIf="isSearching" class="mt-2 text-xs text-slate-500 flex items-center gap-2">
+          <lucide-icon name="loader-2" size="14" class="animate-spin"></lucide-icon>
+          Recherche en cours...
+        </div>
 
-      <div class="text-center space-y-1">
-        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Entrer le Montant</p>
-
-        <div class="flex items-center justify-center gap-2">
-
-          <div class="inline-grid items-center justify-items-center">
-
-            <span class="invisible col-start-1 row-start-1 px-1 text-3xl font-black whitespace-pre">
-        {{ form.get('montant')?.value || '0.00' }}
-      </span>
-
-
-            <input type="number"
-                   formControlName="montant"
-                   class="col-start-1 row-start-1 w-full text-3xl font-black text-slate-900 border-none focus:ring-0 text-center p-0 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-                   placeholder="0.00">
+        <!-- Résultats de recherche -->
+        <div *ngIf="searchResults.length > 0 && !isSearching" class="mt-2 border rounded-lg overflow-hidden">
+          <div
+            *ngFor="let client of searchResults"
+            (click)="selectDestinataire(client)"
+            class="p-3 hover:bg-slate-50 cursor-pointer border-b last:border-b-0 transition-colors"
+          >
+            <div class="flex items-center gap-2">
+              <lucide-icon name="user" size="16" class="text-slate-400"></lucide-icon>
+              <div>
+                <div class="font-medium text-sm">{{ client.prenom }} {{ client.nom }}</div>
+                <div class="text-xs text-slate-600">{{ client.email }}</div>
+              </div>
+            </div>
           </div>
+        </div>
 
-          <span class="text-2xl font-black text-emerald-500">FCFA</span>
+        <!-- Message si aucun résultat -->
+        <div *ngIf="form.get('searchEmail')?.value && searchResults.length === 0 && !isSearching"
+             class="mt-2 text-xs text-slate-500 text-center py-2 bg-slate-50 rounded">
+          Aucun client trouvé avec cet email
         </div>
       </div>
 
-      <!-- Boutons Rapides -->
+      <!-- Sélection du compte destinataire -->
+      <div *ngIf="hasDestinataireAccounts">
+        <label class="block text-xs text-slate-500 font-medium mb-2">Compte destinataire</label>
+        <brn-select formControlName="compteDestination" placeholder="Sélectionnez un compte">
+          <hlm-select-trigger class="w-full h-auto p-2 border border-slate-100 rounded-lg bg-slate-50/50 flex items-center gap-2">
+            <div class="flex-1 text-left min-w-0">
+              <p class="text-[9px] text-slate-400 font-bold leading-none mb-1 uppercase">VERS</p>
+              <hlm-select-value class="text-xs font-bold text-slate-900 truncate"></hlm-select-value>
+            </div>
+          </hlm-select-trigger>
+          <hlm-select-content class="bg-white border-slate-200">
+            <hlm-option
+              *ngFor="let compte of selectedDestinataireComptes"
+              [value]="compte.id"
+            >
+              <div class="flex items-center gap-2 text-xs">
+                <lucide-icon name="landmark" size="12"></lucide-icon>
+                {{ formatCompte(compte) }}
+              </div>
+            </hlm-option>
+          </hlm-select-content>
+        </brn-select>
+        <div *ngIf="form.get('compteDestination')?.touched && form.get('compteDestination')?.invalid"
+             class="text-red-600 text-xs mt-1">
+          Veuillez sélectionner un compte destinataire
+        </div>
+      </div>
+
+      <!-- Montant -->
+      <div>
+        <div class="text-center space-y-1">
+          <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Entrer le Montant</p>
+          <div class="flex items-center justify-center gap-2">
+            <div class="inline-grid items-center justify-items-center">
+              <span class="invisible col-start-1 row-start-1 px-1 text-3xl font-black whitespace-pre">{{ form.get('montant')?.value || '0.00' }}</span>
+              <input type="number" formControlName="montant" inputmode="numeric"
+                     class="col-start-1 row-start-1 w-full text-3xl font-black text-slate-900 border-none focus:ring-0 text-center p-0 [appearance:textfield]"
+                     placeholder="0.00"
+                     [disabled]="isSaving">
+            </div>
+            <span class="text-2xl font-black text-emerald-500">FCFA</span>
+          </div>
+          <div *ngIf="form.get('montant')?.touched && form.get('montant')?.invalid"
+               class="text-red-600 text-xs mt-1">
+            Le montant doit être supérieur à 0
+          </div>
+        </div>
+      </div>
+
+      <!-- Boutons montants rapides -->
       <div class="flex flex-wrap justify-center gap-1.5 mt-4">
         <button type="button" (click)="setAmount(5000)"
-                class="px-3 py-1 rounded-md border border-slate-100 bg-slate-50 text-[10px] font-bold text-slate-500 hover:bg-emerald-50 hover:text-emerald-600 transition-all">
-          +5.000
+                [disabled]="isSaving"
+                class="px-3 py-1 rounded-md border border-slate-100 bg-slate-50 text-[10px] font-bold hover:bg-slate-100 transition-colors disabled:opacity-50">
+          +5 000
         </button>
         <button type="button" (click)="setAmount(10000)"
-                class="px-3 py-1 rounded-md border border-slate-100 bg-slate-50 text-[10px] font-bold text-slate-500 hover:bg-emerald-50 hover:text-emerald-600 transition-all">
-          +10.000
+                [disabled]="isSaving"
+                class="px-3 py-1 rounded-md border border-slate-100 bg-slate-50 text-[10px] font-bold hover:bg-slate-100 transition-colors disabled:opacity-50">
+          +10 000
         </button>
         <button type="button" (click)="setAmount(50000)"
-                class="px-3 py-1 rounded-md border border-slate-100 bg-slate-50 text-[10px] font-bold text-slate-500 hover:bg-emerald-50 hover:text-emerald-600 transition-all">
-          +50.000
+                [disabled]="isSaving"
+                class="px-3 py-1 rounded-md border border-slate-100 bg-slate-50 text-[10px] font-bold hover:bg-slate-100 transition-colors disabled:opacity-50">
+          +50 000
         </button>
         <button type="button" (click)="setAmount(0)"
-                class="px-3 py-1 rounded-md border border-slate-100 bg-slate-50 text-[10px] font-bold text-slate-500 hover:bg-red-50 hover:text-red-600 transition-all">
+                [disabled]="isSaving"
+                class="px-3 py-1 rounded-md border border-red-100 bg-red-50 text-[10px] font-bold text-red-600 hover:bg-red-100 transition-colors disabled:opacity-50">
           EFFACER
         </button>
       </div>
 
-      <!-- Frais (Plus dense) -->
+      <!-- Informations -->
       <div class="space-y-2 pt-3 border-t border-slate-50">
         <div class="flex justify-between text-[11px]">
           <span class="text-slate-400 font-medium">Frais de traitement</span>
@@ -117,16 +159,255 @@
         </div>
       </div>
 
-      <!-- Bouton Action (Taille optimisée) -->
+      <!-- Bouton de confirmation -->
       <div class="space-y-3 pt-2">
-        <button hlmBtn
-                class="w-full h-11 bg-emerald-500 hover:bg-emerald-600 text-white rounded-lg text-sm font-bold shadow-md shadow-emerald-50 transition-all">
-          Confirmer le Dépôt
+        <button hlmBtn type="button" (click)="confirmDepot()"
+                [disabled]="isSaving || isLoadingAccounts || form.get('compteDestination')?.invalid || form.get('montant')?.invalid"
+                class="w-full h-11 bg-emerald-500 hover:bg-emerald-600 text-white rounded-lg text-sm font-bold disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2">
+          <lucide-icon *ngIf="isSaving" name="loader-2" size="16" class="animate-spin"></lucide-icon>
+          <span *ngIf="!isSaving">✓ Confirmer le Dépôt</span>
+          <span *ngIf="isSaving">Enregistrement...</span>
         </button>
         <p class="text-[9px] text-center text-slate-400 px-4">
           En cliquant, vous acceptez nos <span class="underline cursor-pointer">Conditions d'Utilisation</span>.
         </p>
       </div>
     </div>
+
+    <!-- ========== ONGLET RETRAIT ========== -->
+    <div hlmTabsContent="retrait" class="mt-6 space-y-6">
+      <!-- Message si aucun compte -->
+      <div *ngIf="!hasMyAccounts && !isLoadingAccounts" class="p-4 bg-amber-50 border border-amber-200 rounded-lg text-amber-700 text-sm text-center">
+        <lucide-icon name="alert-triangle" size="20" class="mx-auto mb-2"></lucide-icon>
+        Vous n'avez aucun compte actif
+      </div>
+
+      <!-- Sélection du compte source -->
+      <div *ngIf="hasMyAccounts">
+        <label class="block text-xs text-slate-500 font-medium mb-2">Retrait depuis</label>
+        <brn-select formControlName="compteRetrait" placeholder="Sélectionnez votre compte">
+          <hlm-select-trigger class="w-full h-auto p-2 border border-slate-100 rounded-lg bg-slate-50/50 flex items-center gap-2">
+            <div class="flex-1 text-left min-w-0">
+              <p class="text-[9px] text-slate-400 font-bold leading-none mb-1 uppercase">DE</p>
+              <hlm-select-value class="text-xs font-bold text-slate-900 truncate"></hlm-select-value>
+            </div>
+          </hlm-select-trigger>
+          <hlm-select-content class="bg-white border-slate-200">
+            <hlm-option
+              *ngFor="let compte of myAccounts"
+              [value]="compte.id"
+            >
+              <div class="flex items-center gap-2 text-xs">
+                <lucide-icon name="landmark" size="12"></lucide-icon>
+                {{ formatCompte(compte) }}
+              </div>
+            </hlm-option>
+          </hlm-select-content>
+        </brn-select>
+        <div *ngIf="form.get('compteRetrait')?.touched && form.get('compteRetrait')?.invalid"
+             class="text-red-600 text-xs mt-1">
+          Veuillez sélectionner un compte
+        </div>
+      </div>
+
+      <!-- Montant -->
+      <div *ngIf="hasMyAccounts">
+        <div class="text-center space-y-1">
+          <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Entrer le Montant</p>
+          <div class="flex items-center justify-center gap-2">
+            <div class="inline-grid items-center justify-items-center">
+              <span class="invisible col-start-1 row-start-1 px-1 text-3xl font-black whitespace-pre">{{ form.get('montantRetrait')?.value || '0.00' }}</span>
+              <input type="number" formControlName="montantRetrait" inputmode="numeric"
+                     class="col-start-1 row-start-1 w-full text-3xl font-black text-slate-900 border-none focus:ring-0 text-center p-0 [appearance:textfield]"
+                     placeholder="0.00"
+                     [disabled]="isSaving">
+            </div>
+            <span class="text-2xl font-black text-emerald-500">FCFA</span>
+          </div>
+          <div *ngIf="form.get('montantRetrait')?.touched && form.get('montantRetrait')?.invalid"
+               class="text-red-600 text-xs mt-1">
+            Le montant doit être supérieur à 0
+          </div>
+        </div>
+
+        <!-- Boutons montants rapides -->
+        <div class="flex flex-wrap justify-center gap-1.5 mt-4">
+          <button type="button" (click)="setRetraitAmount(1000)" [disabled]="isSaving" class="px-3 py-1 rounded-md border bg-slate-50 text-[10px] font-bold hover:bg-slate-100 transition-colors disabled:opacity-50">1 000</button>
+          <button type="button" (click)="setRetraitAmount(5000)" [disabled]="isSaving" class="px-3 py-1 rounded-md border bg-slate-50 text-[10px] font-bold hover:bg-slate-100 transition-colors disabled:opacity-50">5 000</button>
+          <button type="button" (click)="setRetraitAmount(10000)" [disabled]="isSaving" class="px-3 py-1 rounded-md border bg-slate-50 text-[10px] font-bold hover:bg-slate-100 transition-colors disabled:opacity-50">10 000</button>
+          <button type="button" (click)="setRetraitAmount(0)" [disabled]="isSaving" class="px-3 py-1 rounded-md border bg-red-50 text-[10px] font-bold text-red-600 hover:bg-red-100 transition-colors disabled:opacity-50">EFFACER</button>
+        </div>
+
+        <!-- Informations -->
+        <div class="space-y-2 pt-3 border-t border-slate-50">
+          <div class="flex justify-between text-[11px]">
+            <span class="text-slate-400 font-medium">Frais</span>
+            <span class="text-emerald-600 font-bold">Variable</span>
+          </div>
+          <div class="flex justify-between text-[11px]">
+            <span class="text-slate-400 font-medium">Délai</span>
+            <span class="text-slate-900 font-bold">Instantané</span>
+          </div>
+        </div>
+
+        <!-- Bouton de confirmation -->
+        <div class="space-y-3 pt-2">
+          <button hlmBtn type="button" (click)="confirmRetrait()"
+                  [disabled]="isSaving || isLoadingAccounts || form.get('compteRetrait')?.invalid || form.get('montantRetrait')?.invalid"
+                  class="w-full h-11 bg-emerald-500 hover:bg-emerald-600 text-white rounded-lg text-sm font-bold disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2">
+            <lucide-icon *ngIf="isSaving" name="loader-2" size="16" class="animate-spin"></lucide-icon>
+            <span *ngIf="!isSaving">✓ Confirmer le Retrait</span>
+            <span *ngIf="isSaving">Traitement...</span>
+          </button>
+          <p class="text-[9px] text-center text-slate-400 px-4">
+            En cliquant, vous acceptez nos <span class="underline">Conditions d'Utilisation</span>.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========== ONGLET VIREMENT (remplacé) ========== -->
+    <div hlmTabsContent="virement" class="mt-6 space-y-6">
+      <!-- Message si aucun compte -->
+      <div *ngIf="!hasMyAccounts && !isLoadingAccounts" class="p-4 bg-amber-50 border border-amber-200 rounded-lg text-amber-700 text-sm text-center">
+        <lucide-icon name="alert-triangle" size="20" class="mx-auto mb-2"></lucide-icon>
+        Vous n'avez aucun compte actif
+      </div>
+
+      <!-- Contenu principal (responsive) -->
+      <div *ngIf="hasMyAccounts" class="space-y-4">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <!-- Compte source -->
+          <div>
+            <label class="block text-xs text-slate-500 font-medium mb-2">De (votre compte)</label>
+            <brn-select formControlName="compteVirementSource" placeholder="Sélectionnez le compte source">
+              <hlm-select-trigger class="w-full bg-gray-50 border border-slate-200 rounded-md py-2 px-3 min-w-0 flex items-center">
+                <hlm-select-value class="text-xs font-bold text-slate-900 truncate"></hlm-select-value>
+              </hlm-select-trigger>
+              <hlm-select-content class="bg-white border-slate-200">
+                <hlm-option *ngFor="let compte of myAccounts" [value]="compte.id">
+                  <div class="text-xs truncate">{{ formatCompte(compte) }}</div>
+                </hlm-option>
+              </hlm-select-content>
+            </brn-select>
+            <div *ngIf="form.get('compteVirementSource')?.touched && form.get('compteVirementSource')?.invalid"
+                 class="text-red-600 text-xs mt-1">Veuillez sélectionner un compte source</div>
+          </div>
+
+          <!-- Compte destination (recherche + select) -->
+          <div>
+            <label class="block text-xs text-slate-500 font-medium mb-2">Destinataire</label>
+
+            <!-- recherche -->
+            <div class="flex gap-2 items-center">
+              <div class="flex-1 min-w-0">
+                <div class="p-2 border border-slate-100 rounded-lg flex items-center gap-2 bg-white">
+                  <lucide-icon [name]="isSearching ? 'loader-2' : 'search'"
+                               [size]="14"
+                               [class.animate-spin]="isSearching"
+                               class="text-slate-400"></lucide-icon>
+                  <input formControlName="searchEmailVirement" type="email"
+                         class="w-full bg-transparent border-none text-xs focus:ring-0 p-0 placeholder:text-slate-300 truncate"
+                         placeholder="Email du destinataire..."
+                         [disabled]="isSaving" />
+                </div>
+                <div *ngIf="searchResults.length > 0 && !isSearching" class="mt-2 border rounded-lg overflow-hidden max-h-48 overflow-auto">
+                  <div *ngFor="let client of searchResults"
+                       (click)="selectDestinataireVirement(client)"
+                       class="p-3 hover:bg-slate-50 cursor-pointer border-b last:border-b-0 transition-colors">
+                    <div class="flex items-center gap-2">
+                      <lucide-icon name="user" size="16" class="text-slate-400"></lucide-icon>
+                      <div class="min-w-0">
+                        <div class="font-medium text-sm truncate">{{ client.prenom }} {{ client.nom }}</div>
+                        <div class="text-xs text-slate-600 truncate">{{ client.email }}</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div *ngIf="form.get('searchEmailVirement')?.value && searchResults.length === 0 && !isSearching" class="mt-2 text-xs text-slate-500 text-center py-2 bg-slate-50 rounded">
+                  Aucun client trouvé avec cet email
+                </div>
+              </div>
+            </div>
+
+            <!-- select comptes destinataire -->
+            <div *ngIf="hasDestinataireAccounts" class="mt-3">
+              <label class="text-xs text-slate-500 mb-1 block">Vers (compte destinataire)</label>
+              <brn-select formControlName="compteVirementDestination" placeholder="Sélectionnez le compte destinataire">
+                <hlm-select-trigger class="w-full bg-gray-50 border border-slate-200 rounded-md py-2 px-3 min-w-0">
+                  <hlm-select-value class="text-xs font-bold text-slate-900 truncate"></hlm-select-value>
+                </hlm-select-trigger>
+                <hlm-select-content class="bg-white border-slate-200">
+                  <hlm-option *ngFor="let compte of selectedDestinataireComptes" [value]="compte.id">
+                    <div class="text-xs truncate">{{ formatCompte(compte) }}</div>
+                  </hlm-option>
+                </hlm-select-content>
+              </brn-select>
+              <div *ngIf="form.get('compteVirementDestination')?.touched && form.get('compteVirementDestination')?.invalid"
+                   class="text-red-600 text-xs mt-1">Veuillez sélectionner un compte destinataire</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Référence (full width) -->
+        <div>
+          <label class="block text-xs text-slate-500 font-medium mb-2">Référence / Motif (optionnel)</label>
+          <input formControlName="referenceVirement" type="text"
+                 placeholder="Ex: Loyer janvier 2026"
+                 [disabled]="isSaving"
+                 class="w-full px-4 py-2 border border-slate-100 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 disabled:opacity-50 min-w-0" />
+        </div>
+
+        <!-- Montant -->
+        <div>
+          <div class="text-center space-y-1">
+            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Montant à transférer</p>
+            <div class="flex items-center justify-center gap-2">
+              <div class="inline-grid items-center justify-items-center w-48 md:w-72">
+                <span class="invisible col-start-1 row-start-1 px-1 text-3xl font-black whitespace-pre">{{ form.get('montantVirement')?.value || '0.00' }}</span>
+                <input type="number" formControlName="montantVirement" inputmode="numeric"
+                       class="col-start-1 row-start-1 w-full text-3xl font-black text-slate-900 border-none focus:ring-0 text-center p-0 [appearance:textfield]"
+                       placeholder="0.00" [disabled]="isSaving">
+              </div>
+              <span class="text-2xl font-black text-emerald-500">FCFA</span>
+            </div>
+            <div *ngIf="form.get('montantVirement')?.touched && form.get('montantVirement')?.invalid" class="text-red-600 text-xs mt-1">
+              Le montant doit être supérieur à 0
+            </div>
+          </div>
+
+          <!-- Boutons montants rapides (responsive wrap) -->
+          <div class="flex flex-wrap justify-center gap-2 mt-4">
+            <button type="button" (click)="setVirementAmount(10000)" [disabled]="isSaving" class="px-3 py-1 rounded-md border bg-slate-50 text-[10px] font-bold hover:bg-slate-100 transition-colors disabled:opacity-50">10 000</button>
+            <button type="button" (click)="setVirementAmount(50000)" [disabled]="isSaving" class="px-3 py-1 rounded-md border bg-slate-50 text-[10px] font-bold hover:bg-slate-100 transition-colors disabled:opacity-50">50 000</button>
+            <button type="button" (click)="setVirementAmount(100000)" [disabled]="isSaving" class="px-3 py-1 rounded-md border bg-slate-50 text-[10px] font-bold hover:bg-slate-100 transition-colors disabled:opacity-50">100 000</button>
+            <button type="button" (click)="setVirementAmount(0)" [disabled]="isSaving" class="px-3 py-1 rounded-md border bg-red-50 text-[10px] font-bold text-red-600 hover:bg-red-100 transition-colors disabled:opacity-50">EFFACER</button>
+          </div>
+
+          <!-- Confirmation -->
+          <div class="space-y-3 pt-4">
+            <button hlmBtn type="button" (click)="confirmVirement()"
+                    [disabled]="isSaving || isLoadingAccounts || form.get('compteVirementSource')?.invalid || form.get('compteVirementDestination')?.invalid || form.get('montantVirement')?.invalid"
+                    class="w-full h-11 bg-emerald-500 hover:bg-emerald-600 text-white rounded-lg text-sm font-bold disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2">
+              <lucide-icon *ngIf="isSaving" name="loader-2" size="16" class="animate-spin"></lucide-icon>
+              <span *ngIf="!isSaving">✓ Confirmer le Virement</span>
+              <span *ngIf="isSaving">Traitement...</span>
+            </button>
+            <p class="text-[9px] text-center text-slate-400 px-4">
+              En cliquant, vous acceptez nos <span class="underline">Conditions d'Utilisation</span>.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
   </hlm-tabs>
+
+  <!-- Bouton de fermeture -->
+  <button type="button" hlmBtn variant="ghost"
+          class="w-full mt-4"
+          (click)="close()"
+          [disabled]="isSaving">
+    Annuler
+  </button>
 </div>

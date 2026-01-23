@@ -73,10 +73,9 @@ export class Register {
     password: ['', [Validators.required, Validators.minLength(8)]],
   });
 
-  // Formulaire d'activation (client existant)
   activationForm = this.fb.group({
     email: ['', [Validators.required, Validators.email]],
-    identifiant: ['', [Validators.required, Validators.pattern(/^CT-\d{6}$/)]],
+    identifiant: ['', [Validators.required, Validators.pattern(/^CLT-[A-Z0-9]{8}$/)]], // ← Nouveau pattern
   });
 
   constructor() {

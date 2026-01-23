@@ -4,13 +4,13 @@ import {LucideAngularModule} from 'lucide-angular';
 import {HlmButtonImports} from '@spartan-ng/helm/button';
 import {CommonModule} from '@angular/common';
 import {HlmTableImports} from '@spartan-ng/helm/table';
-import {Account, EtatCompte} from '../../types/compte.type';
+import {Account, EtatCompte} from '../types/compte.type';
 import {HlmCollapsibleImports} from '@spartan-ng/helm/collapsible';
-import {TransactionTableComponent} from '../../shared/components/transactions-table/table.component';
-import {Transaction} from '../../types/transaction.type';
+import {TransactionTableComponent} from '../shared/components/transactions-table/table.component';
+import {Transaction} from '../types/transaction.type';
 import {Router} from '@angular/router';
-import {AccountService, Compte} from '../../services/account';
-import {AuthService} from '../../services/auth';
+import {AccountService, Compte} from '../services/account';
+import {AuthService} from '../services/auth';
 import {toast} from 'ngx-sonner';
 
 @Component({

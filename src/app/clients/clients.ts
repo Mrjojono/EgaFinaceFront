@@ -10,6 +10,7 @@ import {ClientsService, Client} from '../services/client';
 import {DecimalPipe} from '@angular/common';
 import {BrnDialogService} from '@spartan-ng/brain/dialog';
 import {AddClientComponent} from '../shared/components/add-clients/add-client';
+import {RouterLink} from '@angular/router';
 
 type SortColumn = 'id' | 'nom' | 'prenom' | 'email' | 'telephone';
 
@@ -25,6 +26,7 @@ type SortColumn = 'id' | 'nom' | 'prenom' | 'email' | 'telephone';
     HlmLabel,
     HlmInput,
     HlmTableImports,
+    RouterLink,
   ],
   templateUrl: './clients.html'
 })

@@ -1,8 +1,8 @@
-import { Injectable } from '@angular/core';
-import { Apollo } from 'apollo-angular';
-import { map, catchError } from 'rxjs/operators';
-import { Observable, of } from 'rxjs';
-import {  REGISTER_MUTATION, UPDATE_CLIENT_MUTATION, DELETE_CLIENT_MUTATION } from '../graphql/mutations';
+import {Injectable} from '@angular/core';
+import {Apollo} from 'apollo-angular';
+import {map, catchError} from 'rxjs/operators';
+import {Observable, of} from 'rxjs';
+import {REGISTER_MUTATION, UPDATE_CLIENT_MUTATION, DELETE_CLIENT_MUTATION} from '../graphql/mutations';
 import {GET_CLIENTS} from '../graphql/queries';
 
 export interface Client {
@@ -18,9 +18,10 @@ export interface Client {
   dateNaissance?: string;
 }
 
-@Injectable({ providedIn: 'root' })
+@Injectable({providedIn: 'root'})
 export class ClientsService {
-  constructor(private apollo: Apollo) {}
+  constructor(private apollo: Apollo) {
+  }
 
   /**
    * Récupère les clients paginés
@@ -29,7 +30,7 @@ export class ClientsService {
     return this.apollo
       .query<{ clients: Client[] }>({
         query: GET_CLIENTS,
-        variables: { page, size },
+        variables: {page, size},
         fetchPolicy: 'network-only'
       })
       .pipe(
@@ -79,7 +80,7 @@ export class ClientsService {
   updateClient(id: string, client: Partial<Client>) {
     return this.apollo.mutate({
       mutation: UPDATE_CLIENT_MUTATION,
-      variables: { id, client }
+      variables: {id, client}
     });
   }
 
@@ -89,7 +90,7 @@ export class ClientsService {
   deleteClient(id: string) {
     return this.apollo.mutate({
       mutation: DELETE_CLIENT_MUTATION,
-      variables: { id }
+      variables: {id}
     });
   }
 }

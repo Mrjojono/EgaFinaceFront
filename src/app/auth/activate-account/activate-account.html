@@ -1,0 +1,76 @@
+<div class="min-h-screen flex items-center justify-center bg-gray-50 p-6">
+  <div class="w-full max-w-md bg-white rounded-xl shadow-lg p-8">
+    <h1 class="text-2xl font-bold mb-2 text-gray-900">Activation du compte</h1>
+    <p class="text-sm text-gray-500 mb-6">
+      {{ token ? 'Complétez l\'activation en choisissant un mot de passe.' : 'Entrez votre identifiant et email pour recevoir un lien d\'activation.' }}
+    </p>
+
+    <!-- Global messages -->
+    <div *ngIf="errorMessage()" class="mb-4 p-3 bg-red-50 border border-red-100 text-red-700 rounded">
+      {{ errorMessage() }}
+    </div>
+    <div *ngIf="successMessage()" class="mb-4 p-3 bg-emerald-50 border border-emerald-100 text-emerald-700 rounded">
+      {{ successMessage() }}
+    </div>
+
+    <!-- COMPLETE activation (token present) -->
+    <form *ngIf="token" (ngSubmit)="submitComplete()" class="space-y-4">
+      <div>
+        <label hlmLabel class="text-xs font-semibold">Mot de passe</label>
+        <input hlmInput type="password" formControlName="password" [formControl]="cf['password']" class="w-full" placeholder="••••••••" />
+        <div *ngIf="cf['password'].touched && cf['password'].invalid" class="text-xs text-red-600 mt-1">
+          Mot de passe requis (min. 8 caractères).
+        </div>
+      </div>
+
+      <div>
+        <label hlmLabel class="text-xs font-semibold">Confirmer mot de passe</label>
+        <input hlmInput type="password" formControlName="confirmPassword" [formControl]="cf['confirmPassword']" class="w-full" placeholder="••••••••" />
+        <div *ngIf="cf['confirmPassword'].touched && cf['confirmPassword'].invalid" class="text-xs text-red-600 mt-1">
+          Confirmation requise.
+        </div>
+      </div>
+
+      <div class="flex gap-3">
+        <button hlmBtn type="submit" class="flex-1 bg-emerald-600 text-white" [disabled]="isSubmitting()">
+          <span *ngIf="!isSubmitting()">Activer mon compte</span>
+          <span *ngIf="isSubmitting()">Activation...</span>
+        </button>
+        <button hlmBtn type="button" variant="outline" class="w-28" (click)="router.navigate(['/login'])">Se connecter</button>
+      </div>
+    </form>
+
+    <!-- INITIATE activation (no token) -->
+    <form *ngIf="!token" (ngSubmit)="submitInitiate()" class="space-y-4">
+      <div>
+        <label hlmLabel class="text-xs font-semibold">Identifiant client</label>
+        <input hlmInput type="text" [formControl]="ii['identifiant']" placeholder="CLT-XXXXXXXX" class="w-full" />
+        <div *ngIf="ii['identifiant'].touched && ii['identifiant'].invalid" class="text-xs text-red-600 mt-1">
+          Identifiant requis.
+        </div>
+      </div>
+
+      <div>
+        <label hlmLabel class="text-xs font-semibold">Email</label>
+        <input hlmInput type="email" [formControl]="ii['email']" placeholder="vous@exemple.com" class="w-full" />
+        <div *ngIf="ii['email'].touched && ii['email'].invalid" class="text-xs text-red-600 mt-1">
+          Email invalide.
+        </div>
+      </div>
+
+      <div class="flex gap-3">
+        <button hlmBtn type="submit" class="flex-1 bg-emerald-600 text-white" [disabled]="isSubmitting()">
+          <span *ngIf="!isSubmitting()">Demander activation</span>
+          <span *ngIf="isSubmitting()">Envoi...</span>
+        </button>
+        <button hlmBtn type="button" variant="outline" class="w-28" (click)="router.navigate(['/login'])">Se connecter</button>
+      </div>
+    </form>
+
+    <p class="text-xs text-gray-400 mt-4">
+      Si vous rencontrez un problème, contactez le support.
+    </p>
+  </div>
+
+  <hlm-toaster />
+</div>

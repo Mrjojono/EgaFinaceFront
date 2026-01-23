@@ -1,17 +1,18 @@
-import {Component, OnInit, inject} from '@angular/core';
+import {ChangeDetectorRef, Component, inject, NgZone, OnInit} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {ActivatedRoute, Router} from '@angular/router';
-import {AccountService, Compte} from '../../../services/account';
+import {AccountService, Compte, StatutCompte} from '../../../services/account';
 import {LucideAngularModule} from 'lucide-angular';
 import {HlmBadgeImports} from '@spartan-ng/helm/badge';
 import {HlmButton} from '@spartan-ng/helm/button';
-import {ReactiveFormsModule, FormBuilder, Validators} from '@angular/forms';
+import {FormBuilder, ReactiveFormsModule, Validators} from '@angular/forms';
 import {HlmLabelImports} from '@spartan-ng/helm/label';
-import {HlmInputImports} from '@spartan-ng/helm/input';
-import {BrnSelect, BrnSelectImports} from '@spartan-ng/brain/select';
+import {BrnSelectImports, BrnSelect} from '@spartan-ng/brain/select';
 import {HlmSelectImports} from '@spartan-ng/helm/select';
+import {HlmInputImports} from '@spartan-ng/helm/input';
 import {finalize} from 'rxjs/operators';
-import {NgZone, ChangeDetectorRef} from '@angular/core';
+import {Role} from '../../../types/user.type';
+import {AuthService} from '../../../services/auth';
 
 
 @Component({
@@ -26,7 +27,8 @@ import {NgZone, ChangeDetectorRef} from '@angular/core';
     HlmLabelImports,
     BrnSelectImports,
     HlmSelectImports,
-    BrnSelect
+    BrnSelect,
+    HlmInputImports
   ],
   templateUrl: './compte-details.html',
 })
@@ -37,6 +39,7 @@ export class CompteDetailsPage implements OnInit {
   private fb = inject(FormBuilder);
   private ngZone = inject(NgZone);
   private cdr = inject(ChangeDetectorRef);
+  private authService = inject(AuthService);
 
   compte: Compte | null = null;
   isLoading = true;
@@ -47,8 +50,13 @@ export class CompteDetailsPage implements OnInit {
   isSaving = false;
   saveMessage = '';
   form = this.fb.group({
-    typeCompte: ['', [Validators.required]]
+    typeCompte: ['', [Validators.required]],
+    libelle: ['']
   });
+
+  isAdmin(): boolean {
+    return this.authService.hasRole([Role.ADMIN, Role.SUPER_ADMIN, Role.AGENT_ADMIN]);
+  }
 
   ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get('id');
@@ -65,7 +73,6 @@ export class CompteDetailsPage implements OnInit {
     this.errorMessage = '';
     this.compte = null;
 
-
     this.accountService.getCompteById(id).pipe(finalize(() => {
       this.ngZone.run(() => {
         this.isLoading = false;
@@ -73,11 +80,13 @@ export class CompteDetailsPage implements OnInit {
       });
     })).subscribe({
       next: (c: Compte | null) => {
-        console.log('loadCompte -> compte reçu:', c);
         this.ngZone.run(() => {
           this.compte = c;
           if (c) {
-            this.form.patchValue({typeCompte: c.typeCompte});
+            this.form.patchValue({
+              typeCompte: c.typeCompte,
+              libelle: c.libelle || ''
+            });
           } else {
             this.errorMessage = 'Compte introuvable';
           }
@@ -97,13 +106,22 @@ export class CompteDetailsPage implements OnInit {
     if (!this.compte) return;
     this.editMode = !this.editMode;
     if (this.editMode) {
-      this.form.patchValue({typeCompte: this.compte.typeCompte});
+      this.form.patchValue({
+        typeCompte: this.compte.typeCompte,
+        libelle: this.compte.libelle || ''
+      });
     } else {
       this.saveMessage = '';
-      this.form.reset({typeCompte: this.compte?.typeCompte ?? ''});
+      this.form.reset({
+        typeCompte: this.compte?.typeCompte ?? '',
+        libelle: this.compte?.libelle ?? ''
+      });
     }
   }
 
+  /**
+   * Save changes: use server response when available; never mutate the original object.
+   */
   saveChanges() {
     if (!this.compte) return;
     if (this.form.invalid) {
@@ -112,17 +130,26 @@ export class CompteDetailsPage implements OnInit {
     }
     this.isSaving = true;
     this.saveMessage = '';
-    const updates = {typeCompte: this.form.value.typeCompte} as Partial<Compte>;
+    const updates = {
+      typeCompte: this.form.value.typeCompte,
+      libelle: this.form.value.libelle
+    } as Partial<Compte>;
 
     this.accountService.updateAccount(this.compte.id, updates).subscribe({
       next: (res: any) => {
         this.isSaving = false;
 
-        if (this.compte) {
-          this.compte.typeCompte = updates.typeCompte!;
+        // If server returns updated object use it, else merge immutably
+        const returnedCompte = res?.data?.updateCompte ?? res?.updateCompte ?? res?.data?.updateAccount ?? res?.updateAccount ?? res;
+        if (returnedCompte && typeof returnedCompte === 'object' && (returnedCompte.id || returnedCompte.numero)) {
+          this.compte = returnedCompte as Compte;
+        } else {
+          this.compte = this.compte ? ({ ...this.compte, ...(updates as any) }) : this.compte;
         }
-        this.saveMessage = 'Modifications enregistrées';
+
+        this.saveMessage = 'Modifications enregistrées avec succès';
         this.editMode = false;
+        this.cdr.detectChanges();
       },
       error: (err) => {
         console.error('Erreur updateAccount', err);
@@ -151,7 +178,7 @@ export class CompteDetailsPage implements OnInit {
   }
 
   goBack() {
-    this.router.navigate(['/comptes']);
+    this.router.navigate(['/dashboard/accounts']);
   }
 
   formatMontant(montant: number | undefined): string {
@@ -172,23 +199,59 @@ export class CompteDetailsPage implements OnInit {
     });
   }
 
-  getTypeCompteLabel(type: string): string {
+  // Accept undefined and return a safe label
+  getTypeCompteLabel(type?: string): string {
     const labels: { [key: string]: string } = {
       'COURANT': 'Compte Courant',
       'EPARGNE': 'Compte Épargne',
       'PROFESSIONNEL': 'Compte Business'
     };
+    if (!type) return '—';
     return labels[type] || type;
   }
 
-  getTypeCompteIcon(type: string): string {
+  // Accept undefined and return a safe icon name
+  getTypeCompteIcon(type?: string): string {
     const icons: { [key: string]: string } = {
       'COURANT': 'wallet',
       'EPARGNE': 'piggy-bank',
       'PROFESSIONNEL': 'briefcase'
     };
+    if (!type) return 'wallet';
     return icons[type] || 'wallet';
   }
 
+  isSuspended(): boolean {
+    return this.compte?.statutCompte === StatutCompte.SUSPENDU;
+  }
 
+  toggleStatus() {
+    if (!this.compte) return;
+
+    const action = this.isSuspended() ? 'réactiver' : 'suspendre';
+    const ok = confirm(`Voulez-vous ${action} ce compte ?`);
+    if (!ok) return;
+
+    this.isSaving = true;
+
+    this.accountService.updateAccount(this.compte.id, {
+      statutCompte: this.isSuspended() ? StatutCompte.ACTIF : StatutCompte.SUSPENDU
+    }).subscribe({
+      next: (res: any) => {
+        const returned = res?.data?.updateCompte ?? res?.updateCompte ?? null;
+        if (returned) {
+          this.compte = returned as Compte;
+        } else {
+          const newStatut = this.isSuspended() ? StatutCompte.ACTIF : StatutCompte.SUSPENDU;
+          this.compte = this.compte ? ({ ...this.compte, statutCompte: newStatut }) : this.compte;
+        }
+        this.isSaving = false;
+        this.cdr.detectChanges();
+      },
+      error: () => {
+        this.isSaving = false;
+        this.errorMessage = 'Impossible de modifier le statut du compte';
+      }
+    });
+  }
 }

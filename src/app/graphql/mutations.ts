@@ -91,6 +91,7 @@ export const CREATE_COMPTE_MUTATION = gql`
     createCompte(input: $input) {
       id
       typeCompte
+      libelle
       solde
       proprietaire {
         id
@@ -105,6 +106,14 @@ export const UPDATE_COMPTE_MUTATION = gql`
       id
       typeCompte
       solde
+      libelle
+      statutCompte
+      numero
+      dateCreation
+      proprietaire {
+        id
+        identifiant
+      }
     }
   }
 `;

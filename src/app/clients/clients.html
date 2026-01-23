@@ -50,10 +50,7 @@
         <table hlmTable class=" rounded-lg w-full">
           <thead hlmTHead>
           <tr hlmTr>
-            <th hlmTh class="w-20 cursor-pointer" (click)="sort('id')">
-              ID
-              <span *ngIf="sortColumn() === 'id'"> {{ sortDirection() === 'asc' ? '▲' : '▼' }} </span>
-            </th>
+
             <th hlmTh class="cursor-pointer" (click)="sort('nom')">
               Nom
               <span *ngIf="sortColumn() === 'nom'"> {{ sortDirection() === 'asc' ? '▲' : '▼' }} </span>
@@ -76,7 +73,6 @@
           </tr>
 
           <tr *ngFor="let client of filteredClients(); trackBy: trackById" hlmTr class="hover:bg-gray-50/50 transition-colors h-16">
-            <td hlmTd class="font-mono text-xs text-gray-500">{{ client.id }}</td>
             <td hlmTd class="font-medium">{{ client.nom }}</td>
             <td hlmTd>{{ client.prenom }}</td>
             <td hlmTd>{{ client.email }}</td>
@@ -85,13 +81,9 @@
             <td hlmTd class="font-mono text-xs">{{ client.identifiant }}</td>
             <td hlmTd class="text-right">
               <div class="flex items-center justify-end gap-2">
-                <button hlmBtn variant="ghost" (click)="openEditClient(client)">
-                  <lucide-icon name="edit-2" size="14"></lucide-icon>
-                  <span class="sr-only">Éditer</span>
-                </button>
-                <button hlmBtn variant="destructive" (click)="confirmAndDelete(client)">
-                  <lucide-icon name="trash-2" size="14"></lucide-icon>
-                  <span class="sr-only">Supprimer</span>
+                <!-- Only "Details" / view button, edit & delete removed -->
+                <button hlmBtn variant="ghost" [routerLink]="['/clients', client.id]" title="Détails">
+                  <lucide-icon name="info" size="14"></lucide-icon>
                 </button>
               </div>
             </td>

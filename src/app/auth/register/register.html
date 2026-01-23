@@ -388,14 +388,15 @@
                   type="text"
                   id="identifiant"
                   formControlName="identifiant"
-                  placeholder="CT-000000"
+                  placeholder="CLT-19E83AD3"
                   class="w-full py-6 bg-gray-50/30 font-mono tracking-widest uppercase"
-                  [class.border-red-505]="activationForm.get('identifiant')?.invalid && activationForm.get('identifiant')?.touched">
+                  [class.border-red-500]="activationForm.get('identifiant')?.invalid && activationForm.get('identifiant')?.touched">
 
-                <p class="text-[11px] text-gray-400">Exemple : CT-123456. Disponible sur vos relevés de compte.</p>
+                <p class="text-[11px] text-gray-400">Exemple : CLT-19E83AD3. Disponible sur vos relevés de compte.</p>
 
                 @if (activationForm.get('identifiant')?.invalid && activationForm.get('identifiant')?.touched) {
-                  <p class="text-xs text-red-600">L'identifiant doit être au format CT-XXXXXX.</p>
+                  <p class="text-xs text-red-600">L'identifiant doit être au format CLT-XXXXXXXX (8 caractères
+                    alphanumériques).</p>
                 }
               </div>
             </div>

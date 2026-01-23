@@ -1,163 +1,195 @@
-<div>
-  <header class="flex flex-row justify-between items-center mb-6">
+<div class="p-6 space-y-6">
+  <header class="flex items-center justify-between mb-2">
     <div>
-      <h1 class="text-3xl font-bold tracking-tight">Transactions</h1>
-      <p class="text-muted-foreground">Consultez et gérez vos flux financiers</p>
+      <h1 class="text-2xl font-extrabold text-slate-900">Transactions</h1>
+      <p class="text-sm text-slate-500 mt-1">Consultez et filtrez vos flux financiers</p>
     </div>
 
-    <div class="flex flex-row gap-3">
-      <button hlmBtn variant="outline" class="flex rounded-lg items-center gap-2">
-        <lucide-icon name="download" size="18"></lucide-icon>
-        Export
+    <div class="flex items-center gap-3">
+      <button hlmBtn variant="outline"
+              class="flex items-center gap-2 px-3 py-1.5"
+              [disabled]="isExporting() || !selectedAccountId() || !startDate() || !endDate()"
+              (click)="exportToPdf()">
+        <lucide-icon [name]="isExporting() ? 'loader-2' : 'download'"
+                     [class.animate-spin]="isExporting()"
+                     size="16"></lucide-icon>
+        <span class="text-sm">{{ isExporting() ? 'Génération...' : 'Export PDF' }}</span>
       </button>
 
-      <button (click)="openAddCompte()" hlmBtn
-              class="bg-emerald-600 hover:bg-emerald-700 rounded-lg text-white flex items-center gap-2">
-        <lucide-icon name="plus" size="18"></lucide-icon>
-        Nouvelle Transaction
+      <button hlmBtn class="flex items-center gap-2 px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-md"
+              (click)="openAddCompte()">
+        <lucide-icon name="plus" size="16"></lucide-icon>
+        <span class="text-sm">Nouvelle Transaction</span>
       </button>
     </div>
   </header>
 
-  <section class="mt-6  bg-white rounded-lg" hlmCard>
-    <div class=" flex flex-row  flex-wrap items-end justify-between gap-2" hlmCardContent>
-      <div class="flex items-end flex-row gap-6 flex-1">
-        <!-- Account select -->
-        <div class="flex flex-col gap-2 max-w-72">
-          <label hlmLabel class="text-xs font-bold uppercase text-gray-500 tracking-wider">Compte</label>
-          <brn-select class="w-full rounded" (valueChange)="onAccountChange($event)" placeholder="Choisir un compte">
-            <hlm-select-trigger class="w-full rounded bg-gray-50 border-gray-200">
-              <hlm-select-value/>
-            </hlm-select-trigger>
+  <section hlmCard class="p-5 rounded-xl border border-slate-200 bg-white shadow-sm overflow-visible">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-5 items-end">
 
-            <hlm-select-content class="max-h-64 overflow-y-auto">
-              <hlm-option *ngFor="let acc of accounts()" [value]="acc.id">
-                {{ acc.numero }} — {{ acc.typeCompte }}
-              </hlm-option>
-            </hlm-select-content>
-          </brn-select>
-        </div>
+      <div class="flex flex-col gap-1.5">
+        <label hlmLabel class="text-[10px] font-bold uppercase text-slate-400 ml-1 tracking-wider">Compte source</label>
+        <brn-select placeholder="Sélectionnez un compte" (valueChange)="onAccountChange($event)">
+          <hlm-select-trigger class="w-full h-10 bg-slate-50 border-slate-200 rounded-lg px-3 flex items-center hover:bg-slate-100/50 transition-colors">
+            <hlm-select-value class="text-sm" />
+          </hlm-select-trigger>
+          <hlm-select-content class="bg-white border border-slate-200 rounded-lg shadow-xl">
+            <hlm-option *ngFor="let acc of accounts()" [value]="acc.id" class="p-2.5 hover:bg-emerald-50 cursor-pointer">
+              <span class="text-sm font-medium">{{ acc.numero }}</span>
+              <span class="text-slate-300 mx-2">|</span>
+              <span class="text-[11px] text-slate-500">{{ acc.typeCompte }}</span>
+            </hlm-option>
+          </hlm-select-content>
+        </brn-select>
+      </div>
 
-        <div class="flex flex-col gap-2 flex-1 max-w-50">
-          <label hlmLabel class="text-xs font-bold uppercase text-gray-500 tracking-wider">Date de début</label>
-          <input hlmInput class="w-full rounded bg-gray-50 border-gray-200" type="date"
-                 (change)="setStartDate($any($event.target).value)">
-        </div>
-
-        <div class="flex flex-col gap-2 flex-1 max-w-50">
-          <label hlmLabel class="text-xs font-bold uppercase text-gray-500 tracking-wider">Date de fin</label>
-          <input hlmInput class="w-full bg-gray-50 rounded border-gray-200" type="date"
-                 (change)="setEndDate($any($event.target).value)">
-        </div>
-
-        <div class="flex flex-col gap-2 flex-1 max-w-62.5">
-          <label hlmLabel class="text-xs font-bold uppercase text-gray-500 tracking-wider">Type de transaction</label>
-
-          <brn-select class="w-full rounded" (valueChange)="setTypeFilter($event)" placeholder="Filtrer par type">
-            <hlm-select-trigger class="w-full rounded bg-gray-50 border-gray-200">
-              <hlm-select-value/>
-            </hlm-select-trigger>
-
-            <hlm-select-content class="max-h-64 overflow-y-auto">
-              <hlm-option *ngFor="let type of transactionTypes" [value]="type.value">
-                {{ type.label }}
-              </hlm-option>
-            </hlm-select-content>
-          </brn-select>
+      <div class="flex flex-col gap-1.5 md:col-span-2">
+        <label hlmLabel class="text-[10px] font-bold uppercase text-slate-400 ml-1 tracking-wider">Intervalle de dates</label>
+        <div class="grid grid-cols-2 gap-3">
+          <input hlmInput type="date" class="h-10 w-full bg-slate-50 border-slate-200 rounded-lg px-3 text-sm focus:ring-1 focus:ring-emerald-500/30 transition-all" (change)="setStartDate($any($event.target).value)" />
+          <input hlmInput type="date" class="h-10 w-full bg-slate-50 border-slate-200 rounded-lg px-3 text-sm focus:ring-1 focus:ring-emerald-500/30 transition-all" (change)="setEndDate($any($event.target).value)" />
         </div>
       </div>
 
-      <div class="flex items-center gap-2">
-        <input hlmInput type="text" placeholder="Recherche (id, description, statut)" class="px-3 py-2 rounded"
-               (input)="setSearchTerm($any($event.target).value)"/>
-
-        <button hlmBtn class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 rounded transition-all active:scale-95"
-                (click)="loadTransactions()">
-          <lucide-icon name="search" size="16"></lucide-icon>
-          Filtrer les résultats
-        </button>
-
-        <button hlmBtn variant="outline" class="px-3" (click)="clearFilters()">
-          Effacer
-        </button>
-      </div>
-    </div>
-  </section>
-
-  <section class="mt-6">
-    <div hlmTableContainer class="border rounded p-4 bg-white overflow-hidden  min-h-100 flex flex-col">
-
-      <div class="flex-1 overflow-auto">
-        <table hlmTable class=" rounded-lg w-full">
-          <thead hlmTHead>
-          <tr hlmTr>
-            <th hlmTh class="w-37.5 cursor-pointer" (click)="sort('id')">
-              ID
-              <span *ngIf="sortColumn() === 'id'"> {{ sortDirection() === 'asc' ? '▲' : '▼' }} </span>
-            </th>
-            <th hlmTh class="cursor-pointer" (click)="sort('date')">
-              Date
-              <span *ngIf="sortColumn() === 'date'"> {{ sortDirection() === 'asc' ? '▲' : '▼' }} </span>
-            </th>
-            <th hlmTh class="cursor-pointer" (click)="sort('description')">
-              Description
-              <span *ngIf="sortColumn() === 'description'"> {{ sortDirection() === 'asc' ? '▲' : '▼' }} </span>
-            </th>
-            <th hlmTh class="text-right cursor-pointer" (click)="sort('amount')">
-              Montant
-              <span *ngIf="sortColumn() === 'amount'"> {{ sortDirection() === 'asc' ? '▲' : '▼' }} </span>
-            </th>
-            <th hlmTh class="text-right cursor-pointer" (click)="sort('status')">
-              Statut
-              <span *ngIf="sortColumn() === 'status'"> {{ sortDirection() === 'asc' ? '▲' : '▼' }} </span>
-            </th>
-          </tr>
-          </thead>
-
-          <tbody hlmTBody>
-          <tr *ngIf="isLoadingTransactions()" class="h-16">
-            <td hlmTd colspan="5" class="text-center text-sm text-gray-500">Chargement des transactions...</td>
-          </tr>
-
-          <tr *ngFor="let transac of paginatedTransactions(); trackBy: trackById" hlmTr class="hover:bg-gray-50/50 transition-colors h-16">
-            <td hlmTd class="font-mono text-xs text-gray-500">{{ transac.id }}</td>
-            <td hlmTd class="text-gray-600">{{ transac.date }}</td>
-            <td hlmTd class="font-medium">{{ transac.description }}</td>
-            <td hlmTd class="text-right font-bold" [class.text-emerald-600]="transac.amount > 0">
-              {{ transac.amount | number }} FCFA
-            </td>
-            <td hlmTd class="text-right">
-                <span class="text-[10px] font-bold px-3 py-1 rounded-full bg-emerald-100 text-emerald-700">
-                  {{ transac.status }}
-                </span>
-            </td>
-          </tr>
-
-          <tr *ngIf="!isLoadingTransactions() && transactions().length === 0">
-            <td hlmTd colspan="5" class="text-center text-sm text-gray-500">Aucune transaction trouvée.</td>
-          </tr>
-
-          </tbody>
-        </table>
+      <div class="flex flex-col gap-1.5">
+        <label hlmLabel class="text-[10px] font-bold uppercase text-slate-400 ml-1 tracking-wider">Type d'opération</label>
+        <brn-select (valueChange)="setTypeFilter($event)" placeholder="Toutes les opérations">
+          <hlm-select-trigger class="w-full h-10 bg-slate-50 border-slate-200 rounded-lg px-3 flex items-center">
+            <hlm-select-value class="text-sm" />
+          </hlm-select-trigger>
+          <hlm-select-content class="bg-white border border-slate-200 rounded-lg shadow-xl">
+            <hlm-option *ngFor="let t of transactionTypes" [value]="t.value" class="p-2.5 text-sm">
+              {{ t.label }}
+            </hlm-option>
+          </hlm-select-content>
+        </brn-select>
       </div>
 
-      <div class="flex items-center justify-between px-6 py-4 bg-gray-50 border-t mt-auto">
-        <div class="text-sm text-gray-500">
-          Page <span class="font-bold text-gray-900">{{ currentPage() }}</span> sur <span
-          class="font-bold text-gray-900">{{ totalPages() }}</span>
+      <div class="flex flex-col gap-1.5 lg:col-span-2">
+        <label hlmLabel class="text-[10px] font-bold uppercase text-slate-400 ml-1 tracking-wider">Rechercher</label>
+        <input hlmInput type="text" placeholder="Nom, réf��rence, montant..." class="w-full h-10 bg-slate-50 border-slate-200 rounded-lg px-3 text-sm focus:bg-white transition-all" (input)="setSearchTerm($any($event.target).value)" />
+      </div>
+
+      <div class="lg:col-span-3 border-t border-slate-100 pt-2"></div>
+
+      <div class="lg:col-span-3 flex flex-wrap items-center justify-between gap-4">
+        <div class="flex items-center gap-2">
+          <input type="checkbox" id="useServerPagination" class="h-3.5 w-3.5 rounded border-slate-300 text-emerald-600 focus:ring-emerald-500" [checked]="useServerPagination()" (change)="useServerPagination.set($any($event.target).checked)" />
+          <label for="useServerPagination" class="text-[11px] font-medium text-slate-500 cursor-pointer">Pagination serveur</label>
         </div>
 
-        <div class="flex gap-2">
-          <button hlmBtn variant="outline" size="sm" (click)="prevPage()" [disabled]="currentPage() === 1">
-            <lucide-icon name="chevron-left" size="16" class="mr-2"></lucide-icon>
-            Précédent
+        <div class="flex items-center gap-3">
+          <button hlmBtn variant="ghost" class="h-9 px-4 text-slate-400 hover:text-slate-600 text-xs font-semibold" (click)="clearFilters()">
+            Réinitialiser
           </button>
-          <button hlmBtn variant="outline" size="sm" (click)="nextPage()" [disabled]="currentPage() === totalPages()">
-            Suivant
-            <lucide-icon name="chevron-right" size="16" class="ml-2"></lucide-icon>
+          <button hlmBtn class="h-9 px-8 bg-slate-900 hover:bg-slate-800 text-white rounded-lg shadow-sm transition-all text-xs font-bold" (click)="loadTransactions()">
+            Filtrer
           </button>
         </div>
       </div>
+
     </div>
   </section>
+
+  <section class="bg-white border rounded-lg shadow-sm overflow-hidden">
+    <table hlmTable class="w-full table-fixed">
+      <thead hlmTHead class="bg-gray-50">
+      <tr hlmTr>
+        <th hlmTh class="w-12"></th>
+        <th hlmTh class="w-36 text-left">Date</th>
+        <th hlmTh class="text-left">Bénéficiaire</th>
+        <th hlmTh class="text-left">Description</th>
+        <th hlmTh class="w-32 text-left">Type</th>
+        <th hlmTh class="w-40 text-right">Montant</th>
+      </tr>
+      </thead>
+
+      <tbody hlmTBody>
+      <tr *ngIf="isLoadingTransactions()">
+        <td colspan="6" class="text-center py-8 text-slate-500">Chargement des transactions...</td>
+      </tr>
+
+      <tr *ngIf="!isLoadingTransactions() && transactions().length === 0">
+        <td colspan="6" class="text-center py-8 text-slate-500">Aucune transaction trouvée.</td>
+      </tr>
+
+      <ng-container *ngIf="!isLoadingTransactions() && transactions().length > 0">
+        <ng-container *ngFor="let t of paginatedTransactions(); trackBy: trackById">
+          <tr hlmTr class="hover:bg-gray-50 transition-colors">
+            <td hlmTd class="align-top">
+              <button hlmBtn variant="ghost" size="sm" (click)="toggleExpand(t.id)" [attr.aria-expanded]="expanded() === t.id" class="p-1">
+                <lucide-icon name="chevron-right" class="w-4 h-4"></lucide-icon>
+              </button>
+            </td>
+
+            <td hlmTd class="text-sm text-slate-600 align-top">{{ t.date | date:'short' }}</td>
+
+            <td hlmTd class="align-top">
+              <div class="min-w-0">
+                <div class="text-sm font-semibold text-slate-900 truncate">{{ t.receiver }}</div>
+                <div class="text-xs text-slate-400 truncate">{{ t.receiverAccount }}</div>
+              </div>
+            </td>
+
+            <td hlmTd class="text-sm text-slate-700 align-top">{{ t.label || (t.senderAccount + ' → ' + t.receiverAccount) }}</td>
+
+            <td hlmTd class="text-sm text-slate-600 align-top">{{ t.type }}</td>
+
+            <td hlmTd class="align-top text-right">
+              <div class="font-semibold">
+                {{ formatAmount(t.amount, t.sens) }}
+              </div>
+            </td>
+          </tr>
+
+          <tr *ngIf="expanded() === t.id" class="bg-gray-50">
+            <td colspan="6" class="p-5">
+              <div class="grid grid-cols-2 gap-6">
+                <div class="space-y-3">
+                  <div>
+                    <div class="text-[10px] font-bold uppercase text-slate-500">Émetteur</div>
+                    <div class="text-sm font-semibold text-slate-900">{{ t.sender }}</div>
+                    <div class="text-xs text-slate-500 font-mono">{{ t.senderAccount }}</div>
+                  </div>
+
+                  <div>
+                    <div class="text-[10px] font-bold uppercase text-slate-500">Bénéficiaire</div>
+                    <div class="text-sm font-semibold text-slate-900">{{ t.receiver }}</div>
+                    <div class="text-xs text-slate-500 font-mono">{{ t.receiverAccount }}</div>
+                  </div>
+                </div>
+
+                <div class="space-y-3 border-l pl-6 border-gray-200">
+                  <div class="flex justify-between items-center">
+                    <span class="text-xs text-slate-500">ID Transaction</span>
+                    <span class="text-xs font-mono bg-gray-100 px-2 py-1 rounded">#{{ t.id }}</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="mt-4 flex justify-end gap-3">
+                <button hlmBtn variant="outline" size="sm" class="px-3 py-1 rounded-md">
+                  <lucide-icon name="download" size="14"></lucide-icon>
+                  Télécharger le reçu
+                </button>
+              </div>
+            </td>
+          </tr>
+        </ng-container>
+      </ng-container>
+      </tbody>
+    </table>
+  </section>
+
+  <div class="flex items-center justify-between px-2 py-3 bg-gray-50 rounded-b-md">
+    <div class="text-sm text-slate-600">Total: <span class="font-semibold text-slate-900">{{ sortedTransactions().length }}</span></div>
+    <div class="flex items-center gap-2">
+      <button hlmBtn variant="outline" size="sm" (click)="prevPage()" [disabled]="currentPage() === 1">Précédent</button>
+      <button hlmBtn variant="outline" size="sm" (click)="nextPage()" [disabled]="currentPage() === totalPages()">Suivant</button>
+    </div>
+  </div>
 </div>
+
+<style>
+  .rotate-90 { transform: rotate(90deg); }
+</style>

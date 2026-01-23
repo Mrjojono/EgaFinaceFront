@@ -15,12 +15,3 @@ export type Account = {
 };
 
 
-export type Compte = {
-  id: string;
-  typeCompte: string;
-  solde: number;
-  proprietaire: {
-    id: string;
-
-  };
-};

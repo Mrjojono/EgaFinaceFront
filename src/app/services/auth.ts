@@ -3,6 +3,7 @@ import {Apollo} from 'apollo-angular';
 import {map} from 'rxjs/operators';
 import {CREATE_USER_MUTATION, LOGIN_MUTATION} from '../graphql/mutations';
 import {AuthResponse, Role, Sexe, User} from '../types/user.type';
+import {GET_ME} from '../graphql/queries';
 
 @Injectable({
   providedIn: 'root'
@@ -109,5 +110,13 @@ export class AuthService {
     sessionStorage.setItem('user', JSON.stringify(user));
     this.currentUserSignal.set(user);
   }
+
+  getMe() {
+    return this.apollo.query({
+      query: GET_ME,
+      fetchPolicy: 'network-only'
+    })
+  }
+
 
 }

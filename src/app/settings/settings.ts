@@ -1,5 +1,5 @@
 import {Component, inject, signal} from '@angular/core';
-import {BrnSelectImports} from '@spartan-ng/brain/select';
+import {BrnSelect, BrnSelectImports} from '@spartan-ng/brain/select';
 import {HlmButton, HlmButtonImports} from '@spartan-ng/helm/button';
 import {HlmSelectImports} from '@spartan-ng/helm/select';
 import {HlmTabs, HlmTabsContent, HlmTabsList, HlmTabsTrigger} from '@spartan-ng/helm/tabs';
@@ -9,6 +9,7 @@ import {HlmInputImports} from '@spartan-ng/helm/input';
 import {HlmLabel} from '@spartan-ng/helm/label';
 import {toast} from 'ngx-sonner';
 import {Nationality} from '../types/user.type';
+import { AuthService } from '../services/auth';
 
 @Component({
   selector: 'app-settings',
@@ -24,12 +25,45 @@ import {Nationality} from '../types/user.type';
     HlmLabel,
     HlmSelectImports,
     BrnSelectImports,
+    BrnSelect,
   ],
   templateUrl: './settings.html',
 })
 export class Settings {
 
   private fb = inject(FormBuilder);
+  private authService = inject(AuthService);
+
+
+  ngOnInit() {
+    this.loadNationalities();
+    this.loadMe();
+  }
+
+  private loadMe(): void {
+    this.authService.getMe().subscribe({
+      next: (result: any) => {
+        const user = result.data.me;
+
+        this.form.patchValue({
+          nom: user.nom,
+          prenom: user.prenom,
+          email: user.email,
+          phone: user.telephone,
+          address: user.adresse,
+          nationalite: user.nationalite,
+        });
+      },
+      error: (err) => {
+        console.error(err);
+        toast.error('Erreur', {
+          description: 'Impossible de charger les informations utilisateur',
+          duration: 4000
+        });
+      }
+    });
+  }
+
   nationalites = signal<Nationality[]>([]);
 
   form = this.fb.group({

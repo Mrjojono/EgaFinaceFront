@@ -1,0 +1,165 @@
+<div class="p-6 bg-gray-50 min-h-screen" role="main">
+  <div class="max-w-6xl mx-auto">
+
+    <!-- Loading -->
+    <div *ngIf="isLoading() && !client()" hlmCard class="bg-white rounded-lg p-12">
+      <div class="text-center text-gray-500">
+        <lucide-icon name="loader-2" class="animate-spin mx-auto mb-3" size="32"></lucide-icon>
+        <p>Chargement du client...</p>
+      </div>
+    </div>
+
+    <!-- Content -->
+    <div *ngIf="!isLoading() && client()" class="space-y-6">
+
+      <!-- Header -->
+      <div hlmCard class="bg-white rounded-lg p-6">
+        <div class="flex items-center justify-between mb-2 gap-4">
+          <div class="min-w-0">
+            <h2 class="text-2xl font-bold text-gray-900 truncate">{{ fullName() }}</h2>
+            <p class="text-sm text-gray-500 mt-1 truncate">{{ client()?.email || '—' }}</p>
+          </div>
+
+          <div class="flex items-center gap-2 whitespace-nowrap">
+            <button hlmBtn variant="outline" (click)="goBack()" class="h-9 px-3">
+              <lucide-icon name="arrow-left" size="14"></lucide-icon>
+              <span class="ml-1 hidden sm:inline">Retour</span>
+            </button>
+            <button hlmBtn class="h-9 px-3 bg-emerald-600 hover:bg-emerald-700 text-white" [routerLink]="['/transactions']">
+              <lucide-icon name="arrow-right-left" size="14"></lucide-icon>
+              <span class="ml-1 hidden sm:inline">Voir Transactions</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Top: 2 columns (Infos | Comptes) -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <!-- Left: Informations client -->
+        <div>
+          <div hlmCard class="bg-white rounded-lg p-6 h-full">
+            <p class="text-xs text-gray-500 uppercase tracking-wider">Informations</p>
+            <dl class="mt-4 space-y-3">
+              <div>
+                <dt class="text-xs text-slate-500">Nom complet</dt>
+                <dd class="font-semibold">{{ fullName() }}</dd>
+              </div>
+              <div>
+                <dt class="text-xs text-slate-500">Email</dt>
+                <dd>{{ client()?.email || '—' }}</dd>
+              </div>
+              <div>
+                <dt class="text-xs text-slate-500">Téléphone</dt>
+                <dd>{{ client()?.telephone || '—' }}</dd>
+              </div>
+              <div>
+                <dt class="text-xs text-slate-500">Identifiant</dt>
+                <dd class="font-mono">{{ client()?.identifiant || '—' }}</dd>
+              </div>
+              <div>
+                <dt class="text-xs text-slate-500">Nationalité</dt>
+                <dd>{{ client()?.nationalite || '—' }}</dd>
+              </div>
+            </dl>
+          </div>
+        </div>
+
+        <!-- Right: Comptes (liste) -->
+        <div>
+          <div hlmCard class="bg-white rounded-lg p-6 h-full flex flex-col">
+            <div class="flex items-center justify-between mb-4">
+              <h3 class="text-lg font-semibold">Comptes</h3>
+              <div class="text-sm text-slate-500">{{ comptes().length }} compte{{ comptes().length > 1 ? 's' : '' }}</div>
+            </div>
+
+            <div *ngIf="comptes().length === 0" class="text-sm text-gray-500">Aucun compte trouvé.</div>
+
+            <div class="space-y-3 overflow-auto">
+              <div *ngFor="let compte of comptes()"
+                   class="p-3 rounded-lg mb-2 flex items-center justify-between transition border bg-white hover:shadow-sm cursor-pointer min-w-0"
+                   [ngClass]="selectedCompteId() === compte.id ? 'border-emerald-400 ring-2 ring-emerald-100' : 'border-gray-100'"
+                   (click)="selectCompte(compte.id)"
+                   role="button"
+                   [attr.aria-pressed]="selectedCompteId() === compte.id">
+                <div class="min-w-0">
+                  <div class="text-sm font-semibold truncate">{{ compte.numero }}</div>
+                  <div class="text-xs text-slate-500 truncate">{{ compte.libelle || '—' }}</div>
+                </div>
+                <div class="text-right ml-4">
+                  <div class="text-sm font-bold">{{ formatMontant(compte.solde) }}</div>
+                  <div class="text-xs text-slate-400">{{ formatDate(compte.dateCreation) }}</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="mt-auto pt-4">
+              <p class="text-xs text-slate-400">Sélectionnez un compte pour charger ses transactions et exporter son relevé.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bottom: Transactions full-width -->
+      <div>
+        <div hlmCard class="bg-white rounded-lg p-6">
+          <div class="flex items-center justify-between mb-4 gap-4">
+            <h3 class="text-lg font-semibold">Transactions (compte sélectionné)</h3>
+            <div class="flex items-center gap-2">
+              <button hlmBtn size="sm" variant="outline" (click)="startDate.set(null); endDate.set(null); transactions.set([])">
+                Réinitialiser
+              </button>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 md:grid-cols-3 gap-3 mb-3">
+            <div>
+              <label hlmLabel class="text-xs">Date début</label>
+              <input hlmInput type="date" [value]="startDate()" (change)="startDate.set($any($event.target).value)" class="w-full" />
+            </div>
+            <div>
+              <label hlmLabel class="text-xs">Date fin</label>
+              <input hlmInput type="date" [value]="endDate()" (change)="endDate.set($any($event.target).value)" class="w-full" />
+            </div>
+            <div class="flex flex-col gap-3  items-center  items-end space-x-2">
+              <button hlmBtn class="w-full bg-emerald-600 text-white" (click)="fetchTransactions()" [disabled]="isLoadingTransactions()">
+                <lucide-icon *ngIf="isLoadingTransactions()" name="loader-2" class="animate-spin mr-2" size="12"></lucide-icon>
+                Charger
+              </button>
+              <button hlmBtn variant="outline" class="w-full" (click)="exportRelevePdf()" [disabled]="isExporting() || !selectedCompteId() || !startDate() || !endDate()">
+                <lucide-icon [name]="isExporting() ? 'loader-2' : 'download'" [class.animate-spin]="isExporting()" size="14" class="mr-2"></lucide-icon>
+                Exporter PDF
+              </button>
+            </div>
+          </div>
+
+          <div *ngIf="error()" class="text-sm text-red-600 mb-2">{{ error() }}</div>
+
+          <div *ngIf="transactions().length === 0" class="text-sm text-gray-500">Aucune transaction affichée.</div>
+
+          <div *ngIf="transactions().length > 0" class="overflow-x-auto -mx-4 px-4">
+            <table class="w-full text-sm min-w-[640px]">
+              <thead>
+              <tr class="text-left text-xs text-slate-500">
+                <th class="px-3 py-2">Date</th>
+                <th class="px-3 py-2">Montant</th>
+                <th class="px-3 py-2">Source</th>
+                <th class="px-3 py-2">Destination</th>
+              </tr>
+              </thead>
+              <tbody>
+              <tr *ngFor="let tx of transactions()" class="border-t">
+                <td class="py-2 px-3">{{ formatDate(tx.dateCreation) }}</td>
+                <td class="py-2 px-3 font-semibold">{{ tx.montant | number:'1.0-0' }} FCFA</td>
+                <td class="py-2 px-3 text-xs">{{ getAccountLabel(tx.compteSource) }}</td>
+                <td class="py-2 px-3 text-xs">{{ getAccountLabel(tx.compteDestination) }}</td>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div *ngIf="error() && !isLoading()" class="mt-4 text-sm text-red-600">{{ error() }}</div>
+  </div>
+</div>

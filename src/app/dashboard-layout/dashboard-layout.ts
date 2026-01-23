@@ -6,16 +6,20 @@ import {HlmButton} from '@spartan-ng/helm/button';
 import {HlmAvatarImports} from '@spartan-ng/helm/avatar';
 import {AuthService} from '../services/auth';
 import {Role} from '../types/user.type';
+import {ThemeToggleComponent} from '../shared/components/theme-toggle.component';
 
 
 @Component({
   selector: 'app-dashboard-layout',
-  imports: [RouterOutlet, RouterLink,
+  imports: [
+    RouterOutlet,
+    RouterLink,
     HlmSidebarImports,
     LucideAngularModule,
     HlmButton,
     RouterLinkActive,
     HlmAvatarImports,
+    ThemeToggleComponent,
   ],
   templateUrl: './dashboard-layout.html',
 })
@@ -25,19 +29,6 @@ export class DashboardLayout {
   private router = inject(Router);
 
   protected readonly user = this.authService.getCurrentUser();
-
-
-  /**
-   *
-   *  protected readonly user: User | null = {
-   *     id: "kopkjojojo",
-   *     nom: "joan",
-   *     prenom: "kekeli",
-   *     email: "joan@gmail.com",
-   *     telephone: "jaoajaoja",
-   *     role: Role.ADMIN
-   *   }
-   */
 
   constructor() {
     if (!this.authService.getUser()) {
@@ -66,22 +57,21 @@ export class DashboardLayout {
       title: 'Comptes',
       url: '/dashboard/accounts',
       icon: 'Wallet',
-      roles: [Role.CLIENT, Role.ADMIN]
+      roles: [Role.CLIENT, Role.ADMIN, Role.AGENT_ADMIN]
     },
     {
       title: 'Clients',
       url: '/dashboard/clients',
       icon: 'Users',
-      roles: [Role.ADMIN, Role.SUPER_ADMIN]
+      roles: [Role.ADMIN, Role.SUPER_ADMIN, Role.AGENT_ADMIN]
     },
     {
       title: 'Settings',
       url: '/dashboard/settings',
       icon: 'Settings',
-      roles: [Role.ADMIN, Role.SUPER_ADMIN,Role.CLIENT]
+      roles: [Role.ADMIN, Role.SUPER_ADMIN, Role.CLIENT]
     },
   ];
-
 
   logout() {
     this.authService.logout()

@@ -61,7 +61,20 @@ import {
   Users,
   Wallet,
   Wallet2,
-  Waves
+  Waves,
+  TrendingUp,
+  Layers,
+  ArrowUp,
+  SearchX,
+  ArrowDown,
+  X,
+  BarChart,
+  Pencil,
+  ArrowLeft,
+  Check,
+  Sun,
+  Moon,
+  TrendingDown
 } from 'lucide-angular';
 
 // Creation d'un intercepteur
@@ -120,7 +133,20 @@ export const appConfig: ApplicationConfig = {
         ShieldAlert,
         Megaphone,
         PauseCircle,
-        HelpCircle
+        HelpCircle,
+        TrendingUp,
+        Layers,
+        ArrowUp,
+        SearchX,
+        ArrowDown,
+        X,
+        BarChart,
+        Pencil,
+        ArrowLeft,
+        Check,
+        Sun,
+        Moon,
+        TrendingDown
       })
     )
   ],
